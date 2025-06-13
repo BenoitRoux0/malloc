@@ -1,0 +1,6 @@
+*.so
+libft_malloc_test
+malloc_test
+.test_out
+.objs
+.idea
