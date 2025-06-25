@@ -24,7 +24,14 @@ SRC =	src/free/free.c \
 		src/chunk/get_next_chunk.c \
 		src/end_alloc.c \
 
-SRC_TEST =	test/main.c \
+SRC_TEST =	test/src/main.c \
+			test/src/run_test.c \
+			test/src/run_test_group.c \
+			test/src/test_utils.c \
+			test/src/tests/tiny_tests.c \
+			test/src/tests/small_tests.c \
+			test/src/tests/large_tests.c \
+			test/src/tests/show_alloc_mem_tests.c \
 
 OBJ_DIR = .objs
 
@@ -36,7 +43,7 @@ CFLAGS_TEST =	-Wall -Wextra -Werror -g3
 
 all:	test
 
-test:	$(TEST_NAME) $(FT_TEST_NAME)
+test:	$(FT_TEST_NAME) #$(TEST_NAME)
 
 run_test:	test
 			@mkdir -p .test_out/
@@ -50,9 +57,9 @@ $(OBJ_DIR)/src/%.o:		src/%.c	include/internal/malloc.h
 						@mkdir -p $(shell dirname $@)
 						$(CC) $(CFLAGS) -o $@ -c $< -Iinclude/internal
 
-$(OBJ_DIR)/test/%.o:	test/%.c include/public/malloc.h
-						@mkdir -p $(shell dirname $@)
-						$(CC) $(CFLAGS_TEST) -o $@ -c $< -Iinclude/public
+$(OBJ_DIR)/test/src/%.o:	test/src/%.c include/public/malloc.h test/include/test.h
+							@mkdir -p $(shell dirname $@)
+							$(CC) $(CFLAGS_TEST) -o $@ -c $< -Iinclude/public -Itest/include
 
 $(NAME):				$(FULL_NAME)
 						@ln -s $(FULL_NAME) $(NAME) 2> /dev/null && echo "link created" || echo "link already exists"
