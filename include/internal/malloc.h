@@ -6,12 +6,15 @@
 # include <unistd.h>
 # include <sys/mman.h>
 # include <stdint.h>
+# include <string.h>
 
 # define TINY_MAX 16
 # define TINY_ARENA_SIZE 2
 
 # define SMALL_MAX 256
 # define SMALL_ARENA_SIZE 6
+
+# define has_chunk(ptr) ((t_chunk_header*) ptr)
 
 enum e_types {
 	TINY,
@@ -52,12 +55,17 @@ void	update_after_free_tiny(void);
 void	remove_arena(t_arena_hdr** target, t_arena_hdr* to_remove);
 void*	get_main(void* arena);
 
+// chunks
+size_t	get_chunk_size(void* chunk);
+void*	get_next_page(void* chunk);
+void*	get_next_chunk(void* chunk);
+
 // utils
 size_t	ft_strlen(const char* s);
 void	put_str(int fd, char* s);
 void	put_ptr(int fd, uintptr_t val);
 void	put_hexa(int fd, size_t val);
 
-void	end_alloc(void);
+void	end_alloc(void) __attribute__((destructor));
 
 #endif // MALLOC_H

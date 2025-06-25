@@ -3,6 +3,7 @@
 t_arenas g_arenas = {NULL, NULL, NULL};
 
 static void*	alloc_tiny(size_t size);
+static void*	alloc_small(size_t size);
 static void*	alloc_large(size_t size);
 
 void*	malloc(size_t size) {
@@ -10,11 +11,20 @@ void*	malloc(size_t size) {
 	if (size <= TINY_MAX) {
 		return alloc_tiny(size);
 	}
+	if (size <= SMALL_MAX) {
+		return alloc_small(size);
+	}
 	return alloc_large(size);
 }
 
 static void*	alloc_tiny(size_t size) {
 	void*	ptr = take_tiny(size);
+
+	return ptr + sizeof (t_chunk_header);
+}
+
+static void*	alloc_small(size_t size) {
+	void*	ptr = take_small(size);
 
 	return ptr + sizeof (t_chunk_header);
 }

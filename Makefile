@@ -13,9 +13,14 @@ SRC =	src/free/free.c \
 		src/utils/str.c \
 		src/utils/puts.c \
 		src/arena/append_tiny.c \
+		src/arena/append_small.c \
 		src/arena/take_tiny.c \
+		src/arena/take_small.c \
 		src/arena/update_after_free.c \
 		src/arena/get_main.c \
+		src/chunk/get_chunk_size.c \
+		src/chunk/get_next_page.c \
+		src/chunk/get_next_chunk.c \
 		src/end_alloc.c \
 
 SRC_TEST =	test/main.c \
