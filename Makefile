@@ -10,6 +10,7 @@ TEST_NAME = malloc_test
 SRC =	src/free/free.c \
 		src/malloc/malloc.c \
 		src/realloc/realloc.c \
+		src/show_alloc_mem/show_alloc_mem.c \
 		src/utils/str.c \
 		src/utils/puts.c \
 		src/arena/append_tiny.c \
@@ -57,7 +58,7 @@ $(NAME):				$(FULL_NAME)
 						@ln -s $(FULL_NAME) $(NAME) 2> /dev/null && echo "link created" || echo "link already exists"
 
 $(FULL_NAME):			$(OBJ)
-						$(CC) -shared -Wl,-fini=end_alloc -o $@ $^
+						$(CC) -shared -o $@ $^
 
 $(FT_TEST_NAME):		$(NAME) $(OBJ_TEST)
 						$(CC) -L. -Wl,-rpath=. -o $@ $(OBJ_TEST) -lft_malloc
