@@ -4,6 +4,10 @@ void	free_tiny(void* chunk_ptr);
 void	free_small(void* chunk_ptr);
 void	free_large(void* chunk_ptr);
 
+/**
+ * @brief Free the alloc'd memory
+ * @param ptr The pointer to memory to be freed
+ */
 void	free(void *ptr) {
 	if (ptr == NULL)
 		return;
@@ -34,7 +38,7 @@ void	free_large(void* chunk_ptr) {
 
 void	free_small(void* chunk_ptr) {
 	t_chunk_header*	chunk_hdr = chunk_ptr;
-	t_arena_hdr*	arena_hdr = chunk_ptr - chunk_hdr->offset;
+	t_arena_hdr*	arena_hdr = get_main_arena(chunk_hdr);
 
 	chunk_hdr->owned = false;
 	--arena_hdr->allocated;
@@ -42,7 +46,7 @@ void	free_small(void* chunk_ptr) {
 
 void	free_tiny(void* chunk_ptr) {
 	t_chunk_header*	chunk_hdr = chunk_ptr;
-	t_arena_hdr*	arena_hdr = chunk_ptr - chunk_hdr->offset;
+	t_arena_hdr*	arena_hdr = get_main_arena(chunk_hdr);
 
 	chunk_hdr->owned = false;
 	--arena_hdr->allocated;

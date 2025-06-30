@@ -7,6 +7,9 @@
 # include <sys/wait.h>
 # include <fcntl.h>
 # include <sys/time.h>
+# include <stdio.h>
+# include <stdarg.h>
+# include <stdbool.h>
 
 typedef int	(*test_func)(void);
 
@@ -17,6 +20,7 @@ typedef struct
 }	t_test;
 
 # define TEST(f) ((t_test) {#f, f})
+# define END_TESTS ((t_test) {NULL, NULL})
 
 int		run_test(t_test test);
 void	run_test_group(char* group_name, ...);
@@ -31,5 +35,7 @@ int	show_alloc_mem_tests(void);
 
 void	test_put_str(char* s);
 void	test_put_nbr(int n);
+
+extern char**	g_to_run;
 
 #endif

@@ -1,19 +1,19 @@
-#include <stdio.h>
-
 #include "test.h"
 
-static void	remove_io(char* name);
+static void	redirect_io(char* name);
 static void put_success(char* test_name);
 static void put_fail(char* test_name, int status);
+static void put_time_diff(struct timeval diff);
 
 int	run_test(t_test test) {
-	int	ret;
+	int				status;
 	struct timeval	start;
 	struct timeval	end;
+	struct timeval	diff;
 
 	pid_t pid = fork();
 	if (pid == 0) {
-		remove_io(test.name);
+		redirect_io(test.name);
 		exit(test.func());
 	}
 
@@ -22,24 +22,36 @@ int	run_test(t_test test) {
 	test_put_str(test.name);
 	test_put_str(" running\r");
 
-	waitpid(pid, &ret, 0);
+	waitpid(pid, &status, 0);
 
 	gettimeofday(&end, NULL);
 
-	if (ret == 0) {
+	timersub(&end, &start, &diff);
+
+	if (status == 0) {
 		put_success(test.name);
-		return 0;
+	} else {
+		put_fail(test.name, status);
 	}
 
-	put_fail(test.name, ret);
+	put_time_diff(diff);
+	return status;
+}
 
-	return ret;
+static void put_time_diff(struct timeval diff) {
+	long ms = diff.tv_usec / 1000;
+
+	test_put_str(" ");
+	test_put_nbr(ms);
+	test_put_str(".");
+	test_put_nbr(diff.tv_usec - ms);
+	test_put_str(" ms\n");
 }
 
 static void put_success(char* test_name) {
 	test_put_str("\x1b[2K");
 	test_put_str(test_name);
-	test_put_str(" passed\n");
+	test_put_str(" passed");
 }
 
 static void put_fail(char* test_name, int status) {
@@ -63,16 +75,15 @@ static void put_fail(char* test_name, int status) {
 			break;
 		}
 	}
-
-	test_put_str("\n");
 }
 
-static void	remove_io(char* name) {
+static void	redirect_io(char* name) {
 	char* out_dir = getenv("TEST_OUT_DIR");
 
 	if (out_dir == NULL || strlen(out_dir) == 0) {
 		freopen("/dev/null", "a+", stdout);
 		freopen("/dev/null", "a+", stderr);
+		return;
 	}
 
 	chdir(out_dir);

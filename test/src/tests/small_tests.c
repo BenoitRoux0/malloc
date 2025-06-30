@@ -5,11 +5,14 @@ int	test_instant_free_small(void) {
 	char	data[] = "Hello world";
 
 	for (int i = 0; i < 200; ++i) {
-		void*	ptr = malloc(52);
+		void*	ptr = malloc(1024);
+
 		memcpy(ptr, data, 11);
+
 		if (memcmp(ptr, data, sizeof(data)) != 0) {
 			return 1;
 		}
+
 		free(ptr);
 	}
 
@@ -21,7 +24,8 @@ int	test_free_after_small(void) {
 	void*	ptrs[500];
 
 	for (int i = 0; i < 500; ++i) {
-		ptrs[i] = malloc(52);
+		ptrs[i] = malloc(1024);
+
 		memcpy(ptrs[i], data, 11);
 		if (memcmp(ptrs[i], data, sizeof(data)) != 0) {
 			return 1;

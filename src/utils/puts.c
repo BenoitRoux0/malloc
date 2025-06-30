@@ -1,24 +1,25 @@
 
 #include "malloc.h"
 
-void	put_str(int fd, char* str) {
-	write(fd, str, ft_strlen(str));
+ssize_t put_str(int fd, char* str) {
+	return write(fd, str, ft_strlen(str));
 }
 
-void	put_ptr(int fd, uintptr_t ptr) {
+void put_ptr(int fd, uintptr_t ptr) {
 	put_str(fd, "0x");
 	put_hexa(fd, ptr);
 }
 
-void	put_hexa(int fd, size_t val) {
+ssize_t put_hexa(int fd, size_t val) {
 	char	to_print;
+	ssize_t	count = 0;
 
 	if (val > 15)
-		put_hexa(fd, val / 16);
+		count = put_hexa(fd, val / 16);
 	to_print = val % 16;
 	if (to_print <= 9)
 		to_print += 48;
 	else
 		to_print += 55 + 32;
-	write(1, &to_print, 1);
+	return count + write(1, &to_print, 1);
 }

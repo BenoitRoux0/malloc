@@ -6,6 +6,9 @@ NAME = libft_malloc.so
 FULL_NAME = libft_malloc_$(HOSTTYPE).so
 FT_TEST_NAME = libft_malloc_test
 TEST_NAME = malloc_test
+MOCKS_NAME = mocks.a
+
+CC = gcc
 
 SRC =	src/free/free.c \
 		src/malloc/malloc.c \
@@ -22,6 +25,7 @@ SRC =	src/free/free.c \
 		src/chunk/get_chunk_size.c \
 		src/chunk/get_next_page.c \
 		src/chunk/get_next_chunk.c \
+		src/chunk/get_main_arena.c \
 		src/end_alloc.c \
 
 SRC_TEST =	test/src/main.c \
@@ -33,25 +37,29 @@ SRC_TEST =	test/src/main.c \
 			test/src/tests/large_tests.c \
 			test/src/tests/show_alloc_mem_tests.c \
 
+SRC_MOCKS = test/src/mocks/show_alloc_mem.c
+
 OBJ_DIR = .objs
 
 OBJ =		$(SRC:%.c=$(OBJ_DIR)/%.o)
 OBJ_TEST =	$(SRC_TEST:%.c=$(OBJ_DIR)/%.o)
+OBJ_MOCKS =	$(SRC_MOCKS:%.c=$(OBJ_DIR)/%.o)
 
-CFLAGS =		-Wall -Wextra -Werror -g3 -fpic
-CFLAGS_TEST =	-Wall -Wextra -Werror -g3
+CFLAGS =		-Wall -Wextra -Werror -fpic
+CFLAGS_TEST =	-Wall -Wextra -Werror -funroll-loops
 
 all:	test
 
-test:	$(FT_TEST_NAME) #$(TEST_NAME)
+test:	$(FT_TEST_NAME) $(TEST_NAME)
 
 run_test:	test
+			@mkdir -p .ft_test_out/
 			@mkdir -p .test_out/
 			@echo "running tests for libft_malloc"
-			@/usr/bin/time --format='major: %F\nminor: %R' --output=.test_out/ft_out ./libft_malloc_test
+			@TEST_OUT_DIR=./.ft_test_out/ /usr/bin/time --format='major: %F\nminor: %R' --output=.ft_test_out/faults ./libft_malloc_test
 			@echo "running tests for true_malloc"
-			@/usr/bin/time --format='major: %F\nminor: %R' --output=.test_out/true_out ./malloc_test
-			@diff .test_out/ft_out .test_out/true_out
+			@TEST_OUT_DIR=./.test_out/ /usr/bin/time --format='major: %F\nminor: %R' --output=.test_out/faults ./malloc_test
+			@diff .ft_test_out/faults .test_out/faults
 
 $(OBJ_DIR)/src/%.o:		src/%.c	include/internal/malloc.h
 						@mkdir -p $(shell dirname $@)
@@ -70,8 +78,11 @@ $(FULL_NAME):			$(OBJ)
 $(FT_TEST_NAME):		$(NAME) $(OBJ_TEST)
 						$(CC) -L. -Wl,-rpath=. -o $@ $(OBJ_TEST) -lft_malloc
 
-$(TEST_NAME):			$(NAME) $(OBJ_TEST)
-						$(CC) -o $@ $(OBJ_TEST)
+$(MOCKS_NAME):			$(OBJ_MOCKS)
+						ar -rc $@ $(OBJ_MOCKS)
+
+$(TEST_NAME):			$(OBJ_TEST) $(MOCKS_NAME)
+						$(CC) -o $@ $(OBJ_TEST) $(MOCKS_NAME)
 
 clean:
 						$(RM) -r $(OBJ_DIR)
@@ -81,6 +92,7 @@ fclean:					clean
 						$(RM) $(FULL_NAME)
 						$(RM) $(TEST_NAME)
 						$(RM) $(FT_TEST_NAME)
+						$(RM) $(MOCKS_NAME)
 
 re:						fclean
 						$(MAKE) all

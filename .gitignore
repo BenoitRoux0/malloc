@@ -1,7 +1,9 @@
 *.so
+*.a
 libft_malloc_test
 malloc_test
 .test_out
 .objs
 .idea
 /.test/*
+.ft_test_out/

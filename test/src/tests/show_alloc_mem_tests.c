@@ -1,6 +1,9 @@
 #include "test.h"
 #include "malloc.h"
 
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wunused-result"
+
 int	show_alloc_mem_tests(void) {
 	test_put_str("before: \n");
 	show_alloc_mem();
@@ -14,3 +17,5 @@ int	show_alloc_mem_tests(void) {
 
 	return 0;
 }
+
+# pragma GCC diagnostic pop

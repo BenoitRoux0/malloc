@@ -26,7 +26,7 @@ void*	take_small(size_t size) {
 	chunk->size = size;
 	chunk->owned = true;
 
-	((t_arena_hdr*) ((void*) chunk - chunk->offset))->allocated++;
+	++get_main_arena(chunk)->allocated;
 
 	return chunk;
 }
@@ -35,16 +35,17 @@ static void*	worst_or_fit(size_t size) {
 	t_chunk_header*	worst = NULL;
 	t_chunk_header*	found = NULL;
 
-	for (void* arena_ite = g_arenas.small; arena_ite != NULL; arena_ite = ((t_arena_hdr*) arena_ite)->next) {
-		for (void* sub_arena = arena_ite; sub_arena < (arena_ite + SMALL_ARENA_SIZE * sysconf(_SC_PAGESIZE)); sub_arena += sysconf(_SC_PAGESIZE)) {
+	for (void* arena_ite = g_arenas.small; arena_ite != NULL; arena_ite = has_arena(arena_ite)->next) {
+		for (void* sub_arena = arena_ite; sub_arena < arena_ite + (g_arenas.tiny_arena_size); sub_arena += g_arenas.page_size) {
 			found = sub_arena_worst_or_fit(sub_arena, size);
-			if (!found || found->size == 0) {
+			if (!found || found->size == 0 || found->size < size) {
 				continue;
 			}
-			found->offset = ((void*) found) - arena_ite;
-			if (found->size == size) {
+
+			if (found->size == size || found->size == g_arenas.page_size - sizeof (t_arena_hdr)) {
 				return found;
 			}
+
 			if (worst == NULL || found->size < worst->size) {
 				worst = found;
 			}
@@ -56,10 +57,14 @@ static void*	worst_or_fit(size_t size) {
 
 static void*	sub_arena_worst_or_fit(void* sub_arena, size_t size) {
 	t_chunk_header*	worst = NULL;
-
 	void* chunk_ite = sub_arena + sizeof(t_arena_hdr);
 
-	for (; chunk_ite < sub_arena + sysconf(_SC_PAGESIZE); chunk_ite = get_next_chunk(chunk_ite)) {
+	// if (!((t_arena_hdr*) sub_arena)->initialized) {
+	// 	((t_arena_hdr*) sub_arena)->initialized = true;
+	// 	has_chunk(chunk_ite)->size = sysconf(_SC_PAGESIZE) - sizeof (t_arena_hdr);
+	// }
+
+	for (; chunk_ite < sub_arena + g_arenas.page_size; chunk_ite = get_next_chunk(chunk_ite)) {
 		if (has_chunk(chunk_ite)->owned) {
 			continue;
 		}
@@ -68,7 +73,7 @@ static void*	sub_arena_worst_or_fit(void* sub_arena, size_t size) {
 			worst = chunk_ite;
 		}
 
-		if (has_chunk(chunk_ite)->size == size) {
+		if (has_chunk(chunk_ite)->size == size || has_chunk(chunk_ite)->size == g_arenas.page_size - sizeof (t_arena_hdr)) {
 			return chunk_ite;
 		}
 	}

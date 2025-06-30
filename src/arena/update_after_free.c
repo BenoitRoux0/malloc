@@ -1,6 +1,5 @@
 #include "malloc.h"
 
-
 void	update_after_free_tiny(void) {
 	bool	found_empty = false;
 
@@ -17,7 +16,7 @@ void	update_after_free_tiny(void) {
 }
 
 void	remove_arena(t_arena_hdr** target, t_arena_hdr* to_remove) {
-	if (!(*target))
+	if (!target || !*target || !to_remove)
 		return;
 
 	if (*target == to_remove) {
