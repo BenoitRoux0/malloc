@@ -18,6 +18,7 @@ SRC =	src/free/free.c \
 		src/show_alloc_mem/show_alloc_mem.c \
 		src/utils/str.c \
 		src/utils/puts.c \
+		src/utils/min.c \
 		src/arena/append_tiny.c \
 		src/arena/append_small.c \
 		src/arena/take_tiny.c \

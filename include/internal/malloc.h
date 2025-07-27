@@ -82,7 +82,7 @@ ssize_t	put_str(int fd, char* s);
 void	put_ptr(int fd, uintptr_t val);
 ssize_t	put_hexa(int fd, size_t val);
 ssize_t	put_nbr(int fd, size_t val);
-
+size_t	min(size_t x, size_t y);
 
 void	free(void *ptr);
 void	*malloc(size_t size);
