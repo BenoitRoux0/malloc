@@ -33,9 +33,19 @@ void*	realloc(void* ptr, size_t size) {
 }
 
 static void*	to_tiny(t_chunk_header* chunk_header, size_t size) {
-	(void) chunk_header;
-	(void) size;
-	return NULL;
+	uint8_t* new_ptr = alloc_tiny(size);
+
+	if (!new_ptr)
+		return NULL;
+
+	uint8_t* old_ptr = ((void*) chunk_header) + sizeof(t_chunk_header);
+
+	for (size_t i = 0; i < TINY_MAX; ++i) {
+		new_ptr[i] = old_ptr[i];
+	}
+
+	free(old_ptr);
+	return new_ptr;
 }
 
 static void*	to_small(t_chunk_header* chunk_header, size_t size) {
