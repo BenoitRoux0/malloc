@@ -4,14 +4,29 @@ void	update_after_free_tiny(void) {
 	bool	found_empty = false;
 
 	for (t_arena_hdr* arena = g_arenas.tiny; arena != NULL; arena = arena->next) {
-		if (arena->allocated == 0) {
-			if (!found_empty) {
-				found_empty = true;
-				continue;
-			}
-			remove_arena(&g_arenas.tiny, arena);
-			return;
+		if (arena->allocated != 0) continue;
+
+		if (!found_empty) {
+			found_empty = true;
+			continue;
 		}
+		remove_arena(&g_arenas.tiny, arena);
+		return;
+	}
+}
+
+void	update_after_free_small(void) {
+	bool	found_empty = false;
+
+	for (t_arena_hdr* arena = g_arenas.small; arena != NULL; arena = arena->next) {
+		if (arena->allocated != 0) continue;
+
+		if (!found_empty) {
+			found_empty = true;
+			continue;
+		}
+		remove_arena(&g_arenas.small, arena);
+		return;
 	}
 }
 

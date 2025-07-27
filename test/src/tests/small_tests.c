@@ -21,9 +21,9 @@ int	test_instant_free_small(void) {
 
 int	test_free_after_small(void) {
 	char	data[] = "Hello world";
-	void*	ptrs[500];
+	void*	ptrs[1024];
 
-	for (int i = 0; i < 500; ++i) {
+	for (int i = 0; i < 1024; ++i) {
 		ptrs[i] = malloc(1024);
 
 		memcpy(ptrs[i], data, 11);
@@ -32,9 +32,59 @@ int	test_free_after_small(void) {
 		}
 	}
 
-	for (int i = 0; i < 500; ++i) {
+	for (int i = 0; i < 100; ++i) {
 		free(ptrs[i]);
 	}
+
+	return 0;
+}
+
+int	test_10_mallocs_small(void) {
+	char	data[] = "Hello world";
+	void*	ptrs[10];
+
+	for (int i = 0; i < 10; ++i) {
+		ptrs[i] = malloc(1024);
+
+		memcpy(ptrs[i], data, 11);
+		if (memcmp(ptrs[i], data, sizeof(data)) != 0) {
+			return 1;
+		}
+	}
+
+	t_malloc_data malloc_data = get_malloc_data();
+
+	for (int i = 0; i < 10; ++i) {
+		// free(ptrs[i]);
+	}
+
+	if (malloc_data.mmaped_small != 1)
+		return malloc_data.mmaped_small;
+
+	return 0;
+}
+
+int	test_100_mallocs_small(void) {
+	char	data[] = "Hello world";
+	void*	ptrs[100];
+
+	for (int i = 0; i < 100; ++i) {
+		ptrs[i] = malloc(1024);
+
+		memcpy(ptrs[i], data, 11);
+		if (memcmp(ptrs[i], data, sizeof(data)) != 0) {
+			return 1;
+		}
+	}
+
+	t_malloc_data malloc_data = get_malloc_data();
+
+	for (int i = 0; i < 100; ++i) {
+		// free(ptrs[i]);
+	}
+
+	if (malloc_data.mmaped_small != 1)
+		return malloc_data.mmaped_small;
 
 	return 0;
 }

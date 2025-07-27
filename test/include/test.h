@@ -27,15 +27,27 @@ void	run_test_group(char* group_name, ...);
 
 int	test_instant_free_tiny(void);
 int	test_free_after_tiny(void);
+int	test_100_mallocs_tiny(void);
+
 int	test_instant_free_small(void);
 int	test_free_after_small(void);
+int	test_100_mallocs_small(void);
+int	test_10_mallocs_small(void);
+
 int	test_large(void);
 int	test_very_large(void);
 int	show_alloc_mem_tests(void);
 
+int	test_coalescing(void);
+
 void	test_put_str(char* s);
 void	test_put_nbr(int n);
 
+int	realloc_tiny2large_test(void);
+int	realloc_small2large_test(void);
+
 extern char**	g_to_run;
+extern bool		g_fork;
+
 
 #endif

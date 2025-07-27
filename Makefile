@@ -4,6 +4,8 @@ endif
 
 NAME = libft_malloc.so
 FULL_NAME = libft_malloc_$(HOSTTYPE).so
+NAME_DEBUG = libft_malloc_debug.so
+FULL_NAME_DEBUG = libft_malloc_$(HOSTTYPE)_debug.so
 FT_TEST_NAME = libft_malloc_test
 TEST_NAME = malloc_test
 MOCKS_NAME = mocks.a
@@ -24,9 +26,11 @@ SRC =	src/free/free.c \
 		src/arena/get_main.c \
 		src/chunk/get_chunk_size.c \
 		src/chunk/get_next_page.c \
-		src/chunk/get_next_chunk.c \
 		src/chunk/get_main_arena.c \
-		src/end_alloc.c \
+		src/chunk/get_border_addr.c
+
+SRC_DEBUG =	$(SRC) \
+			src/get_malloc_data.c
 
 SRC_TEST =	test/src/main.c \
 			test/src/run_test.c \
@@ -36,17 +40,23 @@ SRC_TEST =	test/src/main.c \
 			test/src/tests/small_tests.c \
 			test/src/tests/large_tests.c \
 			test/src/tests/show_alloc_mem_tests.c \
+			test/src/tests/coalescing_tests.c \
+			test/src/tests/realloc_tests.c \
 
-SRC_MOCKS = test/src/mocks/show_alloc_mem.c
+SRC_MOCKS = test/src/mocks/show_alloc_mem.c \
+			test/src/mocks/get_malloc_data.c
 
 OBJ_DIR = .objs
+OBJ_DEBUG_DIR = .objs/debug
 
 OBJ =		$(SRC:%.c=$(OBJ_DIR)/%.o)
+OBJ_DEBUG =	$(SRC_DEBUG:%.c=$(OBJ_DEBUG_DIR)/%.o)
 OBJ_TEST =	$(SRC_TEST:%.c=$(OBJ_DIR)/%.o)
 OBJ_MOCKS =	$(SRC_MOCKS:%.c=$(OBJ_DIR)/%.o)
 
 CFLAGS =		-Wall -Wextra -Werror -fpic
-CFLAGS_TEST =	-Wall -Wextra -Werror -funroll-loops
+CFLAGS_DEBUG =	-Wall -Wextra -Werror -fpic -g3 -DDEBUG=1
+CFLAGS_TEST =	-Wall -Wextra -Werror -g3 -DDEBUG=1
 
 all:	test
 
@@ -65,18 +75,28 @@ $(OBJ_DIR)/src/%.o:		src/%.c	include/internal/malloc.h
 						@mkdir -p $(shell dirname $@)
 						$(CC) $(CFLAGS) -o $@ -c $< -Iinclude/internal
 
+$(OBJ_DEBUG_DIR)/src/%.o:		src/%.c	include/internal/malloc.h
+						@mkdir -p $(shell dirname $@)
+						$(CC) $(CFLAGS_DEBUG) -o $@ -c $< -Iinclude/internal
+
 $(OBJ_DIR)/test/src/%.o:	test/src/%.c include/public/malloc.h test/include/test.h
 							@mkdir -p $(shell dirname $@)
 							$(CC) $(CFLAGS_TEST) -o $@ -c $< -Iinclude/public -Itest/include
 
 $(NAME):				$(FULL_NAME)
-						@ln -s $(FULL_NAME) $(NAME) 2> /dev/null && echo "link created" || echo "link already exists"
+						ln -s $(FULL_NAME) $(NAME) && echo "link created" || echo "link already exists"
 
 $(FULL_NAME):			$(OBJ)
 						$(CC) -shared -o $@ $^
 
-$(FT_TEST_NAME):		$(NAME) $(OBJ_TEST)
-						$(CC) -L. -Wl,-rpath=. -o $@ $(OBJ_TEST) -lft_malloc
+$(NAME_DEBUG):			$(FULL_NAME_DEBUG)
+						ln -s $(FULL_NAME_DEBUG) $(NAME_DEBUG) && echo "link created" || echo "link already exists"
+
+$(FULL_NAME_DEBUG):		$(OBJ_DEBUG)
+						$(CC) -shared -o $@ $^
+
+$(FT_TEST_NAME):		$(NAME_DEBUG) $(OBJ_TEST)
+						$(CC) -L. -Wl,-rpath=. -o $@ $(OBJ_TEST) -lft_malloc_debug
 
 $(MOCKS_NAME):			$(OBJ_MOCKS)
 						ar -rc $@ $(OBJ_MOCKS)
@@ -90,9 +110,15 @@ clean:
 fclean:					clean
 						$(RM) $(NAME)
 						$(RM) $(FULL_NAME)
+						$(RM) $(NAME_DEBUG)
+						$(RM) $(FULL_NAME_DEBUG)
 						$(RM) $(TEST_NAME)
 						$(RM) $(FT_TEST_NAME)
 						$(RM) $(MOCKS_NAME)
+						$(RM) -r doc
+
+doc:
+						doxygen
 
 re:						fclean
 						$(MAKE) all

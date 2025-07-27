@@ -23,3 +23,15 @@ ssize_t put_hexa(int fd, size_t val) {
 		to_print += 55 + 32;
 	return count + write(1, &to_print, 1);
 }
+
+ssize_t put_nbr(int fd, size_t val) {
+	char	to_print;
+	ssize_t	count = 0;
+
+	if (val > 9)
+		count = put_hexa(fd, val / 10);
+
+	to_print = val % 10 + 48;
+
+	return count + write(1, &to_print, 1);
+}

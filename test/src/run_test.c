@@ -10,8 +10,12 @@ int	run_test(t_test test) {
 	struct timeval	start;
 	struct timeval	end;
 	struct timeval	diff;
+	pid_t			pid = 0;
 
-	pid_t pid = fork();
+	if (g_fork) {
+		pid = fork();
+	}
+
 	if (pid == 0) {
 		redirect_io(test.name);
 		exit(test.func());
@@ -79,6 +83,9 @@ static void put_fail(char* test_name, int status) {
 
 static void	redirect_io(char* name) {
 	char* out_dir = getenv("TEST_OUT_DIR");
+
+	if (!g_fork)
+		return;
 
 	if (out_dir == NULL || strlen(out_dir) == 0) {
 		freopen("/dev/null", "a+", stdout);

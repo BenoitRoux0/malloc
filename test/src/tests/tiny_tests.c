@@ -34,3 +34,28 @@ int	test_free_after_tiny(void) {
 
 	return 0;
 }
+
+int	test_100_mallocs_tiny(void) {
+	char	data[] = "Hello world";
+	void*	ptrs[100];
+
+	for (int i = 0; i < 100; ++i) {
+		ptrs[i] = malloc(16);
+
+		memcpy(ptrs[i], data, 11);
+		if (memcmp(ptrs[i], data, sizeof(data)) != 0) {
+			return 1;
+		}
+	}
+
+	t_malloc_data malloc_data = get_malloc_data();
+
+	for (int i = 0; i < 100; ++i) {
+		free(ptrs[i]);
+	}
+
+	if (malloc_data.mmaped_tiny != 1)
+		return -1;
+
+	return 0;
+}

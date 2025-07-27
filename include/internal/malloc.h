@@ -2,20 +2,28 @@
 # define MALLOC_H
 
 # include <stdbool.h>
-# include <sys/types.h>
-# include <unistd.h>
 # include <sys/mman.h>
 # include <stdint.h>
-# include <string.h>
+# include <stddef.h>
+# include <unistd.h>
 
 # define TINY_MAX 16
 # define TINY_ARENA_SIZE 16
 
 # define SMALL_MAX 1024
-# define SMALL_ARENA_SIZE 64
+# define SMALL_ARENA_SIZE 128
 
-# define has_chunk(ptr) ((t_chunk_header*) ptr)
-# define has_arena(ptr) ((t_arena_hdr*) ptr)
+# define has_chunk(ptr) ((t_chunk_header*) (ptr))
+# define has_arena(ptr) ((t_arena_hdr*) (ptr))
+
+#define get_next_chunk(chunk) has_chunk((((void*) chunk) + (sizeof(t_chunk_header) + has_chunk(chunk)->true_size)))
+
+#define size_aligned(size) ((size) % 16 == 0 ? (size) : (size) + (16 - ((size) % 16)))
+
+typedef struct {
+	size_t	mmaped_tiny;
+	size_t	mmaped_small;
+}	t_malloc_data;
 
 enum e_types {
 	TINY,
@@ -41,11 +49,10 @@ typedef struct s_arenas {
 }	t_arenas;
 
 typedef struct s_chunk_header {
-	size_t		prec_size;
-	bool		owned;
-	uint8_t		_[8];
-	// size_t		offset;
-	size_t		size;
+	struct s_chunk_header*	prec_chunk;
+	bool					owned;
+	size_t					true_size;
+	size_t					size;
 }	t_chunk_header;
 
 extern	t_arenas g_arenas;
@@ -54,6 +61,7 @@ extern	t_arenas g_arenas;
 void*	take_tiny(size_t size);
 void*	append_tiny(void);
 
+void	update_after_free_small(void);
 void*	take_small(size_t size);
 void*	append_small(void);
 
@@ -64,15 +72,20 @@ void*	get_main(void* arena);
 // chunks
 size_t			get_chunk_size(const void* chunk);
 void*			get_next_page(void* chunk);
-void*			get_next_chunk(void* chunk);
+// void*			get_next_chunk(void* chunk);
 t_arena_hdr*	get_main_arena(void* chunk);
+void*			get_border_addr(t_chunk_header* chunk);
 
 // utils
 size_t	ft_strlen(const char* s);
 ssize_t	put_str(int fd, char* s);
 void	put_ptr(int fd, uintptr_t val);
 ssize_t	put_hexa(int fd, size_t val);
+ssize_t	put_nbr(int fd, size_t val);
 
-void	end_alloc(void);
+
+void	free(void *ptr);
+void	*malloc(size_t size);
+void	*realloc(void *ptr, size_t size);
 
 #endif // MALLOC_H
