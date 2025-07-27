@@ -85,7 +85,12 @@ ssize_t	put_nbr(int fd, size_t val);
 size_t	min(size_t x, size_t y);
 
 void	free(void *ptr);
+
 void	*malloc(size_t size);
+void*	alloc_tiny(size_t size);
+void*	alloc_small(size_t size);
+void*	alloc_large(size_t size);
+
 void	*realloc(void *ptr, size_t size);
 
 #endif // MALLOC_H

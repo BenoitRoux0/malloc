@@ -45,7 +45,7 @@ static void*	to_small(t_chunk_header* chunk_header, size_t size) {
 }
 
 static void*	to_large(t_chunk_header* chunk_header, size_t size) {
-	uint8_t* new_ptr = malloc(size);
+	uint8_t* new_ptr = alloc_large(size);
 	t_chunk_header* new_chunk = (void*) new_ptr - sizeof(t_chunk_header);
 
 	if (!new_ptr)

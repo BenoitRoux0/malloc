@@ -14,6 +14,9 @@ CC = gcc
 
 SRC =	src/free/free.c \
 		src/malloc/malloc.c \
+		src/malloc/alloc_tiny.c \
+		src/malloc/alloc_small.c \
+		src/malloc/alloc_large.c \
 		src/realloc/realloc.c \
 		src/show_alloc_mem/show_alloc_mem.c \
 		src/utils/str.c \
