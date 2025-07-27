@@ -7,3 +7,4 @@ malloc_test
 .idea
 /.test/*
 .ft_test_out/
+doc/
