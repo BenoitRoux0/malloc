@@ -55,7 +55,7 @@ int	test_100_mallocs_tiny(void) {
 	}
 
 	if (malloc_data.mmaped_tiny != 1)
-		return -1;
+		return 2;
 
 	return 0;
 }

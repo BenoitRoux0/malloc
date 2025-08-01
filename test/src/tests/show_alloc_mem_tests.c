@@ -9,8 +9,12 @@ int	show_alloc_mem_tests(void) {
 	show_alloc_mem();
 
 	malloc(14);
+	malloc(13);
+	malloc(15);
+	malloc(8);
 	malloc(52);
 	malloc(5012);
+	malloc(4096);
 
 	test_put_str("after: \n");
 	show_alloc_mem();

@@ -1,3 +1,5 @@
+#include <strings.h>
+
 #include "malloc.h"
 
 void*	alloc_large(size_t size) {
@@ -6,7 +8,12 @@ void*	alloc_large(size_t size) {
 	void*			ptr;
 
 #ifdef DEBUG
-	put_str(1, "mmap arena\n");
+	put_str(2, "mmap large arena\n");
+#endif //DEBUG
+	lock_alloc();
+
+#ifdef DEBUG
+	put_str(2, "mmap large arena\n");
 #endif //DEBUG
 
 	ptr = mmap(NULL, size + sizeof (t_chunk_header) + sizeof (t_arena_hdr), PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
@@ -16,9 +23,16 @@ void*	alloc_large(size_t size) {
 	arena_header->size = size + sizeof (t_chunk_header) + sizeof (t_arena_hdr);
 	arena_header->next = g_arenas.large;
 	chunk_header->size = size;
+	chunk_header->true_size = size;
 	chunk_header->owned = true;
 
 	g_arenas.large = arena_header;
+
+//	put_str(1, "large alloc'd\n");
+
+	unlock_alloc();
+
+	bzero(ptr + sizeof (t_chunk_header) + sizeof (t_arena_hdr), size);
 
 	return ptr + sizeof (t_chunk_header) + sizeof (t_arena_hdr);
 }

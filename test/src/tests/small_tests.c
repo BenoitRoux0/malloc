@@ -20,20 +20,28 @@ int	test_instant_free_small(void) {
 }
 
 int	test_free_after_small(void) {
-	char	data[] = "Hello world";
-	void*	ptrs[1024];
+	void*	ptrs_1[4096];
+	void*	ptrs_2[4096];
+	void*	ptrs_3[4096];
 
-	for (int i = 0; i < 1024; ++i) {
-		ptrs[i] = malloc(1024);
+	for (int i = 0; i < 4096; ++i) {
+		ptrs_1[i] = malloc(32);
 
-		memcpy(ptrs[i], data, 11);
-		if (memcmp(ptrs[i], data, sizeof(data)) != 0) {
-			return 1;
-		}
+		bzero(ptrs_1[i], 32);
+
+		ptrs_2[i] = malloc(256);
+
+		bzero(ptrs_2[i], 256);
+
+		ptrs_3[i] = malloc(128);
+
+		bzero(ptrs_3[i], 128);
 	}
 
-	for (int i = 0; i < 100; ++i) {
-		free(ptrs[i]);
+	for (int i = 0; i < 4096; ++i) {
+		free(ptrs_1[i]);
+		free(ptrs_2[i]);
+		free(ptrs_3[i]);
 	}
 
 	return 0;

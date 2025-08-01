@@ -43,8 +43,23 @@ int	test_coalescing(void);
 void	test_put_str(char* s);
 void	test_put_nbr(int n);
 
+int	realloc_tiny2larger_tiny_test(void);
+int	realloc_larger_tiny2tiny_test(void);
+int	realloc_tiny2small_test(void);
 int	realloc_tiny2large_test(void);
+
+int	realloc_small2larger_small_test(void);
+int	realloc_larger_small2small_test(void);
+int	realloc_small2tiny_test(void);
 int	realloc_small2large_test(void);
+
+int	realloc_large2larger_large_test(void);
+int	realloc_larger_large2large_test(void);
+int	realloc_large2tiny_test(void);
+int	realloc_large2small_test(void);
+
+int	test_printf(void);
+int	test_backtrace(void);
 
 extern char**	g_to_run;
 extern bool		g_fork;

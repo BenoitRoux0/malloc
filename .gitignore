@@ -8,3 +8,5 @@ malloc_test
 /.test/*
 .ft_test_out/
 doc/
+bin/
+lib/

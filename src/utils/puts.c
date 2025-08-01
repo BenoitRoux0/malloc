@@ -19,8 +19,8 @@ ssize_t put_hexa(int fd, size_t val) {
 	if (to_print <= 9)
 		to_print += 48;
 	else
-		to_print += 55 + 32;
-	return count + write(1, &to_print, 1);
+		to_print += 55;
+	return count + write(fd, &to_print, 1);
 }
 
 ssize_t put_nbr(int fd, size_t val) {
@@ -28,9 +28,9 @@ ssize_t put_nbr(int fd, size_t val) {
 	ssize_t	count = 0;
 
 	if (val > 9)
-		count = put_hexa(fd, val / 10);
+		count = put_nbr(fd, val / 10);
 
-	to_print = val % 10 + 48;
+	to_print = val % 10 + '0';
 
-	return count + write(1, &to_print, 1);
+	return count + write(fd, &to_print, 1);
 }

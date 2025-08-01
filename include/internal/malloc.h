@@ -7,6 +7,11 @@
 # include <stddef.h>
 # include <unistd.h>
 
+# ifdef BONUS
+#  include <pthread.h>
+# endif
+
+
 # define TINY_MAX 16
 # define TINY_ARENA_SIZE 16
 
@@ -18,18 +23,18 @@
 
 #define get_next_chunk(chunk) has_chunk((((void*) chunk) + (sizeof(t_chunk_header) + has_chunk(chunk)->true_size)))
 
-#define size_aligned(size) ((size) % 16 == 0 ? (size) : (size) + (16 - ((size) % 16)))
+#define size_aligned(size) ((size) % 16 == 0 ? (size + 16) : ((size) + (16 - ((size) % 16) + 16)))
 
 typedef struct {
 	size_t	mmaped_tiny;
 	size_t	mmaped_small;
 }	t_malloc_data;
 
-enum e_types {
+typedef enum e_size_category {
 	TINY,
 	SMALL,
 	LARGE
-};
+}	t_size_category;
 
 typedef struct s_arena_hdr {
 	bool				is_main;
@@ -57,12 +62,16 @@ typedef struct s_chunk_header {
 
 extern	t_arenas g_arenas;
 
+#ifdef BONUS
+extern	pthread_mutex_t g_alloc_mutex;
+#endif
+
 // arenas
 void*	take_tiny(size_t size);
 void*	append_tiny(void);
 
 void	update_after_free_small(void);
-void*	take_small(size_t size);
+void*	take_small(size_t size, t_chunk_header* hint);
 void*	append_small(void);
 
 void	update_after_free_tiny(void);
@@ -72,25 +81,36 @@ void*	get_main(void* arena);
 // chunks
 size_t			get_chunk_size(const void* chunk);
 void*			get_next_page(void* chunk);
-// void*			get_next_chunk(void* chunk);
 t_arena_hdr*	get_main_arena(void* chunk);
 void*			get_border_addr(t_chunk_header* chunk);
 
 // utils
-size_t	ft_strlen(const char* s);
-ssize_t	put_str(int fd, char* s);
-void	put_ptr(int fd, uintptr_t val);
-ssize_t	put_hexa(int fd, size_t val);
-ssize_t	put_nbr(int fd, size_t val);
-size_t	min(size_t x, size_t y);
+size_t			ft_strlen(const char* s);
+ssize_t			put_str(int fd, char* s);
+void			put_ptr(int fd, uintptr_t val);
+ssize_t			put_hexa(int fd, size_t val);
+ssize_t			put_nbr(int fd, size_t val);
+size_t			min(size_t x, size_t y);
+t_size_category	get_size_category(size_t size);
+void*			ft_memcpy(void *dst, const void *src, size_t n);
+void*			ft_memmove(void* dst, const void* src, size_t len);
+void			lock_alloc(void);
+void			unlock_alloc(void);
 
 void	free(void *ptr);
 
-void	*malloc(size_t size);
+void*	malloc(size_t size);
 void*	alloc_tiny(size_t size);
-void*	alloc_small(size_t size);
+void*	alloc_small(size_t size, t_chunk_header* hint);
 void*	alloc_large(size_t size);
 
-void	*realloc(void *ptr, size_t size);
+void*	realloc(void *ptr, size_t size);
+void*	to_tiny(t_chunk_header* chunk_header, size_t size);
+void*	to_small(t_chunk_header* chunk_header, size_t size);
+void*	to_large(t_chunk_header* chunk_header, size_t size);
+
+void*	calloc(size_t nmemb, size_t size);
+
+void*	reallocarray(void *ptr, size_t nmemb, size_t size);
 
 #endif // MALLOC_H

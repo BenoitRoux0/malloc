@@ -12,9 +12,6 @@ void*	take_tiny(size_t size) {
 			ptr->size = size;
 			ptr->owned = true;
 			++arena_ite->allocated;
-			// put_str(1, "taken: ");
-			// put_hexa(1, arena_ite->allocated);
-			// put_str(1, "\n");
 			return ptr;
 		}
 	}
@@ -34,11 +31,9 @@ void*	take_tiny(size_t size) {
 }
 
 static void*	find_chunk(void* arena_ptr) {
-	for (void* sub_arena = arena_ptr; sub_arena < (arena_ptr + (g_arenas.tiny_arena_size)); sub_arena += g_arenas.page_size) {
-		for (void* chunk_ite = sub_arena + sizeof(t_arena_hdr); chunk_ite < (sub_arena + g_arenas.page_size); chunk_ite += (sizeof(t_chunk_header) + TINY_MAX)) {
-			if (has_chunk(chunk_ite)->owned == false) {
-				return chunk_ite;
-			}
+	for (void* chunk_ite = arena_ptr + sizeof(t_arena_hdr); chunk_ite < (arena_ptr + g_arenas.tiny_arena_size - sizeof(t_chunk_header) - TINY_MAX - 1); chunk_ite += (sizeof(t_chunk_header) + TINY_MAX)) {
+		if (has_chunk(chunk_ite)->owned == false) {
+			return chunk_ite;
 		}
 	}
 	return NULL;

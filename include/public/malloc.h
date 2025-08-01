@@ -21,7 +21,7 @@ void	free(void *ptr);
  * @param size The size of the block allocated
  * @return A pointer to the Allocated memory. NULL in case of error
  */
-void	*malloc(size_t size);
+void*	malloc(size_t size);
 
 /**
  * @brief
@@ -29,7 +29,11 @@ void	*malloc(size_t size);
  * @param size The mew desired size
  * @return the new pointer
  */
-void	*realloc(void *ptr, size_t size);
+void*	realloc(void *ptr, size_t size);
+
+void*	calloc(size_t nmemb, size_t size);
+
+void*	reallocarray(void *ptr, size_t nmemb, size_t size);
 
 void	show_alloc_mem();
 

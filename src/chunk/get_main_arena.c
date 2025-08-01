@@ -1,11 +1,53 @@
 #include "malloc.h"
 
-t_arena_hdr*	get_main_arena(void* chunk) {
-	void* arena_ptr = chunk - (uintptr_t)chunk % g_arenas.page_size;
+static bool	is_in_arena(void* arena, void* chunk);
 
-	while (!has_arena(arena_ptr)->is_main) {
-		arena_ptr -= g_arenas.page_size;
+t_arena_hdr*	get_main_arena(void* chunk) {
+	t_arena_hdr*	arena_hdr;
+
+	arena_hdr = g_arenas.small;
+
+#ifdef DEBUG
+	put_str(2, "main arena of ");
+	put_ptr(2, (uintptr_t) chunk);
+	put_str(2, "\n");
+#endif
+
+	while (arena_hdr) {
+		if (is_in_arena(arena_hdr, chunk)) {
+			return arena_hdr;
+		}
+
+		arena_hdr = arena_hdr->next;
 	}
 
-	return arena_ptr;
+	arena_hdr = g_arenas.tiny;
+
+	while (arena_hdr) {
+		if (is_in_arena(arena_hdr, chunk)) {
+			return arena_hdr;
+		}
+
+		arena_hdr = arena_hdr->next;
+	}
+
+	arena_hdr = g_arenas.large;
+
+	while (arena_hdr) {
+		if (is_in_arena(arena_hdr, chunk)) {
+			return arena_hdr;
+		}
+
+		arena_hdr = arena_hdr->next;
+	}
+
+#ifdef DEBUG
+	put_str(2, "main arena is NULL\n");
+#endif
+
+	return NULL;
+}
+
+static bool	is_in_arena(void* arena, void* chunk) {
+	return chunk > arena && chunk < arena + has_arena(arena)->size;
 }

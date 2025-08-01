@@ -36,9 +36,27 @@ int main(int ac, char** av) {
 		END_TESTS
 	);
 
-	run_test_group("tests realloc",
+	run_test_group("tests realloc from tiny",
+		TEST(realloc_tiny2larger_tiny_test),
+		TEST(realloc_larger_tiny2tiny_test),
+		TEST(realloc_tiny2small_test),
 		TEST(realloc_tiny2large_test),
+		END_TESTS
+	);
+
+	run_test_group("tests realloc from small",
+		TEST(realloc_small2larger_small_test),
+		TEST(realloc_larger_small2small_test),
+		TEST(realloc_small2tiny_test),
 		TEST(realloc_small2large_test),
+		END_TESTS
+	);
+
+	run_test_group("tests realloc from large",
+		TEST(realloc_large2larger_large_test),
+		TEST(realloc_larger_large2large_test),
+		TEST(realloc_large2tiny_test),
+		TEST(realloc_large2small_test),
 		END_TESTS
 	);
 
@@ -49,6 +67,12 @@ int main(int ac, char** av) {
 
 	run_test_group("test show_alloc_mem",
 		TEST(show_alloc_mem_tests),
+		END_TESTS
+	);
+
+	run_test_group("tests external functions",
+		TEST(test_printf),
+		TEST(test_backtrace),
 		END_TESTS
 	);
 
