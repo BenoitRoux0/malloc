@@ -25,6 +25,10 @@ MOCKS_NAME_BONUS =				$(LIB_DIR)/mocks_bonus.a
 CC = 							cc
 
 SRC =							src/free/free.c \
+								src/free/free_chunk.c \
+								src/free/free_tiny.c \
+								src/free/free_small.c \
+								src/free/free_large.c \
 								src/malloc/malloc.c \
 								src/malloc/alloc_tiny.c \
 								src/malloc/alloc_small.c \

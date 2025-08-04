@@ -23,7 +23,7 @@
 
 #define get_next_chunk(chunk) has_chunk((((void*) chunk) + (sizeof(t_chunk_header) + has_chunk(chunk)->true_size)))
 
-#define size_aligned(size) ((size) % 16 == 0 ? (size + 16) : ((size) + (16 - ((size) % 16) + 16)))
+#define size_aligned(size) ((size) % 16 == 0 ? (size + 32) : ((size) + (16 - ((size) % 16) + 32)))
 
 typedef struct {
 	size_t	mmaped_tiny;
@@ -98,6 +98,10 @@ void			lock_alloc(void);
 void			unlock_alloc(void);
 
 void	free(void *ptr);
+void	free_chunk(t_chunk_header* chunk_ptr);
+void	free_tiny(void* chunk_ptr);
+void	free_small(void* chunk_ptr);
+void	free_large(void* chunk_ptr);
 
 void*	malloc(size_t size);
 void*	alloc_tiny(size_t size);

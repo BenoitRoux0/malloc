@@ -40,7 +40,7 @@ void*	to_small(t_chunk_header* chunk_header, size_t size) {
 
 		ft_memmove(new_ptr, old_ptr, copy_size);
 
-		free(old_ptr);
+		free_chunk(chunk_header);
 		return new_ptr;
 //	}
 

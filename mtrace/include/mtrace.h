@@ -10,6 +10,10 @@
 # include <wait.h>
 # include <signal.h>
 # include "malloc.h"
+# include <sys/time.h>
+# include <sys/resource.h>
+# include <sys/ptrace.h>
+# include <signal.h>
 
 void	sig_handler(int signo, siginfo_t *info, void *context);
 

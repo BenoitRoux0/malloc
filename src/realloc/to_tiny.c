@@ -17,6 +17,6 @@ void*	to_tiny(t_chunk_header* chunk_header, size_t size) {
 
 	ft_memmove(new_ptr, old_ptr, TINY_MAX);
 
-	free(old_ptr);
+	free_chunk(chunk_header);
 	return new_ptr;
 }
