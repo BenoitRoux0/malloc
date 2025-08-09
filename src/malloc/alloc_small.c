@@ -9,7 +9,7 @@ void*	alloc_small(size_t size, t_chunk_header* hint) {
 	put_str(2, "\n");
 	if (hint) {
 		put_str(2, "hint: ");
-		put_ptr(2, size);
+		put_ptr(2, (uintptr_t) hint);
 		put_str(2, "\n");
 	}
 #endif
@@ -23,7 +23,16 @@ void*	alloc_small(size_t size, t_chunk_header* hint) {
 	if (ptr == NULL)
 		return NULL;
 
-	bzero(ptr + sizeof (t_chunk_header), size);
+//	bzero(ptr + sizeof (t_chunk_header), size);
+
+#ifdef DEBUG
+	if (is_out(ptr)) {
+		put_str(2, "alloc small addr out: ");
+		put_ptr(2, (uintptr_t) ptr);
+		put_str(2, "\n");
+	}
+#endif
+
 
 	return ptr + sizeof (t_chunk_header);
 }

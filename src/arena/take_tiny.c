@@ -18,6 +18,9 @@ void*	take_tiny(size_t size) {
 
 	t_arena_hdr*	new_arena = append_tiny();
 
+	if (!new_arena)
+		return NULL;
+
 	ptr = find_chunk(new_arena);
 
 	if (ptr == NULL)
@@ -31,7 +34,7 @@ void*	take_tiny(size_t size) {
 }
 
 static void*	find_chunk(void* arena_ptr) {
-	for (void* chunk_ite = arena_ptr + sizeof(t_arena_hdr); chunk_ite < (arena_ptr + g_arenas.tiny_arena_size - sizeof(t_chunk_header) - TINY_MAX - 1); chunk_ite += (sizeof(t_chunk_header) + TINY_MAX)) {
+	for (void* chunk_ite = arena_ptr + sizeof(t_arena_hdr); chunk_ite < (arena_ptr + g_arenas.tiny_arena_size - sizeof(t_chunk_header) - TINY_MAX); chunk_ite += (sizeof(t_chunk_header) + TINY_MAX)) {
 		if (has_chunk(chunk_ite)->owned == false) {
 			return chunk_ite;
 		}

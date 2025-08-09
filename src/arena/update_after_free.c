@@ -39,8 +39,10 @@ void	remove_arena(t_arena_hdr** target, t_arena_hdr* to_remove) {
 
 	if (*target == to_remove) {
 		*target = to_remove->next;
-		// put_str(1, "unmap arena\n");
-		// munmap(to_remove, to_remove->size);
+#ifdef DEBUG
+		put_str(2, "unmap arena\n");
+#endif
+		munmap(to_remove, to_remove->size);
 		return;
 	}
 

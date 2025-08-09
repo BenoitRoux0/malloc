@@ -49,5 +49,5 @@ t_arena_hdr*	get_main_arena(void* chunk) {
 }
 
 static bool	is_in_arena(void* arena, void* chunk) {
-	return chunk > arena && chunk < arena + has_arena(arena)->size;
+	return chunk >= arena && chunk < arena + has_arena(arena)->size;
 }

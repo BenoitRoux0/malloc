@@ -2,7 +2,7 @@
 
 #include "malloc.h"
 
-//static bool	can_expand_on_next(t_chunk_header* chunk_header, size_t size);
+static bool	can_expand_on_next(t_chunk_header* chunk_header, size_t size);
 
 void*	to_small(t_chunk_header* chunk_header, size_t size) {
 	if (get_size_category(chunk_header->size) == SMALL && size <= chunk_header->size) {
@@ -13,7 +13,7 @@ void*	to_small(t_chunk_header* chunk_header, size_t size) {
 		return (void*) chunk_header + sizeof(t_chunk_header);
 	}
 
-	//if (get_size_category(chunk_header->size) == TINY || get_size_category(chunk_header->size) == LARGE || !can_expand_on_next(chunk_header, size)) {
+	if (get_size_category(chunk_header->size) == TINY || get_size_category(chunk_header->size) == LARGE || !can_expand_on_next(chunk_header, size)) {
 #ifdef DEBUG
 		put_str(2, "realloc need new small\n");
 #endif
@@ -42,7 +42,7 @@ void*	to_small(t_chunk_header* chunk_header, size_t size) {
 
 		free_chunk(chunk_header);
 		return new_ptr;
-//	}
+	}
 
 #ifdef DEBUG
 	put_str(2, "realloc expand small\n");
@@ -50,14 +50,10 @@ void*	to_small(t_chunk_header* chunk_header, size_t size) {
 	return alloc_small(size, chunk_header);
 }
 
-/*
 static bool	can_expand_on_next(t_chunk_header* chunk_header, size_t size) {
 	t_chunk_header *next_chunk =  get_next_chunk(chunk_header);
 
 	if (next_chunk->owned)
-		return false;
-
-	if (next_chunk->true_size > (size_t) g_arenas.small_arena_size)
 		return false;
 
 	if (next_chunk->true_size + chunk_header->true_size + sizeof(t_chunk_header) > size_aligned(size)) {
@@ -71,4 +67,3 @@ static bool	can_expand_on_next(t_chunk_header* chunk_header, size_t size) {
 
 	return false;
 }
-*/

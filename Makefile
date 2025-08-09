@@ -22,7 +22,7 @@ FT_TEST_NAME_BONUS = 			$(BIN_DIR)/libft_malloc_test_bonus
 TEST_NAME_BONUS = 				$(BIN_DIR)/malloc_test_bonus
 MOCKS_NAME_BONUS =				$(LIB_DIR)/mocks_bonus.a
 
-CC = 							cc
+CC = 							gcc
 
 SRC =							src/free/free.c \
 								src/free/free_chunk.c \
@@ -48,6 +48,7 @@ SRC =							src/free/free.c \
 								src/utils/ft_memmove.c \
 								src/utils/lock_alloc.c \
 								src/utils/unlock_alloc.c \
+								src/utils/is_out.c \
 								src/arena/append_tiny.c \
 								src/arena/append_small.c \
 								src/arena/take_tiny.c \
@@ -96,9 +97,9 @@ OBJ_DEBUG_BONUS =				$(SRC_DEBUG:%.c=$(OBJ_DEBUG_DIR)/%_bonus.o)
 OBJ_TEST_BONUS =				$(SRC_TEST:%.c=$(OBJ_DIR)/%_bonus.o)
 OBJ_MOCKS_BONUS =				$(SRC_MOCKS:%.c=$(OBJ_DIR)/%_bonus.o)
 
-CFLAGS =						-Wall -Wextra -Werror -rdynamic -fpic
-CFLAGS_DEBUG =					-Wall -Wextra -Werror -rdynamic -fpic  -DDEBUG=1
-CFLAGS_TEST =					-Wall -Wextra -Werror -rdynamic  -DDEBUG=1
+CFLAGS =						-Wall -Wextra -Werror -fpic
+CFLAGS_DEBUG =					-Wall -Wextra -Werror -fpic  -DDEBUG=1
+CFLAGS_TEST =					-Wall -Wextra -Werror  -DDEBUG=1
 
 .PHONY:	all
 all:
@@ -142,7 +143,7 @@ run_test:						test
 
 $(OBJ_DIR)/mtrace/%.o:			mtrace/%.c	mtrace/include/mtrace.h
 								@mkdir -p $(shell dirname $@)
-								$(CC) $(CFLAGS) -o $@ -c $< -Imtrace/include  -Iinclude/public
+								$(CC) $(CFLAGS) -o $@ -c $< -Imtrace/include -Iinclude/public
 
 $(OBJ_DIR)/src/%.o:				src/%.c	include/internal/malloc.h
 								@mkdir -p $(shell dirname $@)
@@ -169,7 +170,7 @@ $(OBJ_DIR)/test/src/%_bonus.o:	test/src/%.c include/public/malloc.h test/include
 								$(CC) $(CFLAGS_TEST) -DBONUS=1 -o $@ -c $< -Iinclude/public -Itest/include
 
 $(NAME_MTRACE):					$(OBJ_MTRACE) | $(BIN_DIR)
-								$(CC) $(CFLAGS) -Wl,-rpath=$(PWD)/$(LIB_DIR) -L$(PWD)/$(LIB_DIR) -o $@ $^ -lft_malloc
+								$(CC) $(CFLAGS) -o $@ $^
 
 $(NAME):						$(FULL_NAME) | $(LIB_DIR)
 								ln -s $(PWD)/$(FULL_NAME) $(NAME) && echo "link created" || echo "link already exists"

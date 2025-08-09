@@ -1,7 +1,7 @@
 #include "test.h"
 
 static void	redirect_io(char* name);
-static void put_success(char* test_name);
+static void put_success(char* test_name, struct rusage* rusage);
 static void put_fail(char* test_name, int status);
 static void put_time_diff(struct timeval diff);
 
@@ -11,6 +11,7 @@ int	run_test(t_test test) {
 	struct timeval	end;
 	struct timeval	diff;
 	pid_t			pid = 0;
+	struct rusage	rusage;
 
 	if (g_fork) {
 		pid = fork();
@@ -26,14 +27,14 @@ int	run_test(t_test test) {
 	test_put_str(test.name);
 	test_put_str(" running\r");
 
-	waitpid(pid, &status, 0);
+	wait4(pid, &status, 0, &rusage);
 
 	gettimeofday(&end, NULL);
 
 	timersub(&end, &start, &diff);
 
 	if (status == 0) {
-		put_success(test.name);
+		put_success(test.name, &rusage);
 	} else {
 		put_fail(test.name, status);
 	}
@@ -52,10 +53,11 @@ static void put_time_diff(struct timeval diff) {
 	test_put_str(" ms\n");
 }
 
-static void put_success(char* test_name) {
+static void put_success(char* test_name, struct rusage* rusage) {
 	test_put_str("\x1b[2K");
 	test_put_str(test_name);
-	test_put_str(" passed");
+	test_put_str(" passed page faults: ");
+	test_put_nbr(rusage->ru_minflt);
 }
 
 static void put_fail(char* test_name, int status) {

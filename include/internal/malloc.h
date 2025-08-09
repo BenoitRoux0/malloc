@@ -16,14 +16,14 @@
 # define TINY_ARENA_SIZE 16
 
 # define SMALL_MAX 1024
-# define SMALL_ARENA_SIZE 128
+# define SMALL_ARENA_SIZE 64
 
 # define has_chunk(ptr) ((t_chunk_header*) (ptr))
 # define has_arena(ptr) ((t_arena_hdr*) (ptr))
 
 #define get_next_chunk(chunk) has_chunk((((void*) chunk) + (sizeof(t_chunk_header) + has_chunk(chunk)->true_size)))
 
-#define size_aligned(size) ((size) % 16 == 0 ? (size + 32) : ((size) + (16 - ((size) % 16) + 32)))
+#define size_aligned(size) ((size) % 16 == 0 ? (size) : ((size) + (16 - ((size) % 16))))
 
 typedef struct {
 	size_t	mmaped_tiny;
@@ -96,6 +96,7 @@ void*			ft_memcpy(void *dst, const void *src, size_t n);
 void*			ft_memmove(void* dst, const void* src, size_t len);
 void			lock_alloc(void);
 void			unlock_alloc(void);
+bool			is_out(t_chunk_header* ptr);
 
 void	free(void *ptr);
 void	free_chunk(t_chunk_header* chunk_ptr);

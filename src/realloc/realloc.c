@@ -9,7 +9,6 @@ void*	realloc(void* ptr, size_t size) {
 	put_str(2, "\n");
 #endif
 
-
 	if (ptr == NULL) {
 		return malloc(size);
 	}
@@ -20,6 +19,13 @@ void*	realloc(void* ptr, size_t size) {
 	}
 
 	t_chunk_header*	chunk_header = ptr - sizeof(t_chunk_header);
+
+#ifdef DEBUG
+	put_str(2, "realloc chunk: ");
+	put_ptr(2, (uintptr_t) chunk_header);
+	put_str(2, "\n");
+#endif
+
 
 	if (size >= chunk_header->size && size <= chunk_header->true_size) {
 		chunk_header->size = size;
@@ -49,6 +55,16 @@ void*	realloc(void* ptr, size_t size) {
 
 #ifdef DEBUG
 	put_str(2, "got new ptr\n");
+
+	if (new_ptr == NULL) {
+		put_str(2, "realloc returned NULL\n");
+	}
+
+	if (new_ptr) {
+		put_str(2, "realloc returned ");
+		put_ptr(2, (uintptr_t) new_ptr);
+		put_str(2, "\n");
+	}
 #endif
 
 	// if (size > old_size) {

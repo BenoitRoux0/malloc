@@ -17,8 +17,6 @@ int	main(int ac, char **av) {
 
 	if (pid == 0) {
 		ptrace(PTRACE_TRACEME, 0, NULL, NULL);
-//		char*	p = (void*) 42;
-//		*p = 5;
 		setenv("LD_PRELOAD", getenv("MALLOC_PATH"), true);
 		printf("run %s\n", *(av + 1));
 		int ret = execvp(*(av + 1), av + 1);
@@ -35,6 +33,7 @@ int	main(int ac, char **av) {
 	bool continue_tracing = true;
 
 	while (continue_tracing) {
+		continue_tracing = false;
 		waitpid(pid, &status, 0);
 
 		if (WIFEXITED(status)) {
@@ -42,16 +41,26 @@ int	main(int ac, char **av) {
 		}
 
 		if (WIFSIGNALED(status)) {
-			dprintf(2, "recv sig: %s\n", strsignal(WTERMSIG(status)));
+			if (WTERMSIG(status) == SIGTRAP) {
+				continue_tracing = true;
+				ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
+			}
 		}
 
-		if (WTERMSIG(status) != SIGTRAP)
-			continue_tracing = false;
+		if (WIFCONTINUED(status)) {
+			dprintf(2, "continued\n");
+		}
 
-		printf("send cont\n");
-		int ret = ptrace(PTRACE_CONT, pid, 1, 0);
-		if (ret != 0)
-			dprintf(2, "ptrace error: %s\n", strerror(errno));
+		if (WIFSTOPPED(status)) {
+			if (WSTOPSIG(status) == SIGTRAP) {
+				continue_tracing = true;
+				ptrace(PTRACE_SYSCALL, pid, NULL, NULL);
+			}
+		}
+		// printf("send cont\n");
+		// long int ret = kill(pid, SIGCONT);
+		// if (ret != 0)
+		// 	dprintf(2, "ptrace error: %s\n", strerror(errno));
 	}
 
 	return 0;

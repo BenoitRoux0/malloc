@@ -10,6 +10,7 @@
 # include <stdio.h>
 # include <stdarg.h>
 # include <stdbool.h>
+# include <sys/resource.h>
 
 typedef int	(*test_func)(void);
 

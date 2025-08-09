@@ -10,6 +10,11 @@ void*	append_tiny(void) {
 	put_str(2, "mmap tiny arena\n");
 #endif //DEBUG
 	ptr = mmap(NULL, g_arenas.tiny_arena_size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+
+	if (ptr == NULL) {
+		return NULL;
+	}
+
 	arena_header = ptr;
 	arena_header->is_main = true;
 	arena_header->allocated = 0;

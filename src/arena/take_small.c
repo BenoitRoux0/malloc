@@ -17,7 +17,8 @@ void*	take_small(size_t size, t_chunk_header* hint) {
 #ifdef DEBUG
 		put_str(2, "need to add arena for smalls\n");
 #endif
-		append_small();
+		if (!append_small())
+			return NULL;
 		chunk = worst_or_fit(size);
 	}
 
@@ -94,7 +95,9 @@ void*	take_small(size_t size, t_chunk_header* hint) {
 #endif
 				get_next_chunk(next_chunk)->prec_chunk = next_chunk;
 #ifdef DEBUG
-				put_str(2, "get_next_chunk(next_chunk) setted\n");
+				put_str(2, "get_next_chunk(next_chunk) setted with size: ");
+				put_nbr(2, next_chunk->true_size);
+				put_str(2, "\n");
 #endif
 			}
 		} else {
