@@ -28,7 +28,6 @@ void*	to_small(t_chunk_header* chunk_header, size_t size) {
 		}
 
 		uint8_t*	old_ptr = (void*) chunk_header + sizeof(t_chunk_header);
-//		bzero(new_ptr, new_chunk->true_size);
 		size_t		copy_size = min(chunk_header->true_size, new_chunk->true_size);
 
 #ifdef DEBUG
@@ -56,12 +55,15 @@ static bool	can_expand_on_next(t_chunk_header* chunk_header, size_t size) {
 	if (next_chunk->owned)
 		return false;
 
-	if (next_chunk->true_size + chunk_header->true_size + sizeof(t_chunk_header) > size_aligned(size)) {
-//		put_str(2, "can expand chunk ");
-//		put_nbr(2,  chunk_header->true_size);
-//		put_str(2, " to ");
-//		put_nbr(2,  chunk_header->true_size + next_chunk->true_size + sizeof (t_chunk_header));
-//		put_str(2, "\n");
+	if (next_chunk->true_size + chunk_header->true_size + sizeof(t_chunk_header) > size_aligned(size) &&
+		(void*) chunk_header + next_chunk->true_size + chunk_header->true_size + sizeof(t_chunk_header) <  get_border_addr(chunk_header) - sizeof(t_chunk_header)) {
+#ifdef DEBUG
+		put_str(2, "can expand chunk ");
+		put_nbr(2,  chunk_header->true_size);
+		put_str(2, " to ");
+		put_nbr(2,  chunk_header->true_size + next_chunk->true_size + sizeof (t_chunk_header));
+		put_str(2, "\n");
+#endif
 		return true;
 	}
 

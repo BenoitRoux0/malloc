@@ -7,9 +7,6 @@ void*	alloc_large(size_t size) {
 	t_chunk_header*	chunk_header;
 	void*			ptr;
 
-#ifdef DEBUG
-	put_str(2, "mmap large arena\n");
-#endif //DEBUG
 	lock_alloc();
 
 #ifdef DEBUG
@@ -24,7 +21,6 @@ void*	alloc_large(size_t size) {
 	}
 
 	arena_header = ptr;
-	arena_header->is_main = true;
 	chunk_header = ptr + sizeof (t_arena_hdr);
 	arena_header->size = size + sizeof (t_chunk_header) + sizeof (t_arena_hdr);
 	arena_header->next = g_arenas.large;
@@ -36,7 +32,6 @@ void*	alloc_large(size_t size) {
 
 //	put_str(1, "large alloc'd\n");
 
-	unlock_alloc();
 
 //	bzero(ptr + sizeof (t_chunk_header) + sizeof (t_arena_hdr), size);
 
@@ -48,5 +43,6 @@ void*	alloc_large(size_t size) {
 	}
 #endif
 
+	unlock_alloc();
 	return ptr + sizeof (t_chunk_header) + sizeof (t_arena_hdr);
 }

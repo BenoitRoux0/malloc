@@ -13,6 +13,9 @@ void	update_after_free_tiny(void) {
 			found_empty = true;
 			continue;
 		}
+#ifdef DEBUG
+		put_str(2, "unmap tiny arena\n");
+#endif
 		remove_arena(&g_arenas.tiny, arena);
 		return;
 	}
@@ -28,6 +31,9 @@ void	update_after_free_small(void) {
 			found_empty = true;
 			continue;
 		}
+#ifdef DEBUG
+		put_str(2, "unmap small arena\n");
+#endif
 		remove_arena(&g_arenas.small, arena);
 		return;
 	}

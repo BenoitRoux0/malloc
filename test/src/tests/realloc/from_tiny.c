@@ -48,7 +48,7 @@ int	realloc_tiny2small_test(void) {
 
 	char* new_ptr = realloc(ptr, 32);
 
-	if (memcmp(new_ptr, data, sizeof(data)) != 0) {
+	if (memcmp(new_ptr, data, 11) != 0) {
 		free(new_ptr);
 		free(ptr);
 		return 1;
@@ -68,7 +68,7 @@ int	realloc_tiny2large_test(void) {
 
 	char* new_ptr = realloc(ptr, 4096);
 
-	if (memcmp(new_ptr, data, sizeof(data)) != 0) {
+	if (memcmp(new_ptr, data, 11) != 0) {
 		free(new_ptr);
 		free(ptr);
 		return 1;

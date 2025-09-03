@@ -18,7 +18,7 @@ int	realloc_large2larger_large_test(void) {
 		return 2;
 	}
 
-	if (memcmp(ptr_ext, data, sizeof(data)) != 0) {
+	if (memcmp(ptr_ext, data, 11) != 0) {
 		free(ptr_ext);
 		free(ptr);
 		return 3;
@@ -43,7 +43,7 @@ int	realloc_larger_large2large_test(void) {
 		return 2;
 	}
 
-	if (memcmp(ptr_ext, data, sizeof(data)) != 0) {
+	if (memcmp(ptr_ext, data, 11) != 0) {
 		free(ptr_ext);
 		free(ptr);
 		return 3;
@@ -74,7 +74,7 @@ int	realloc_large2tiny_test(void) {
 		return 2;
 	}
 
-	if (memcmp(ptr_ext, data, sizeof(data)) != 0) {
+	if (memcmp(ptr_ext, data, 11) != 0) {
 		free(ptr_ext);
 		free(ptr);
 		return 3;
@@ -101,9 +101,8 @@ int	realloc_large2small_test(void) {
 		return 2;
 	}
 
-	if (memcmp(ptr_ext, data, sizeof(data)) != 0) {
+	if (memcmp(ptr_ext, data, 11) != 0) {
 		free(ptr_ext);
-		free(ptr);
 		return 3;
 	}
 

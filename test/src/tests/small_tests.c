@@ -9,7 +9,7 @@ int	test_instant_free_small(void) {
 
 		memcpy(ptr, data, 11);
 
-		if (memcmp(ptr, data, sizeof(data)) != 0) {
+		if (memcmp(ptr, data, 11) != 0) {
 			return 1;
 		}
 
@@ -40,7 +40,7 @@ int	test_10_mallocs_small(void) {
 		ptrs[i] = malloc(1024);
 
 		memcpy(ptrs[i], data, 11);
-		if (memcmp(ptrs[i], data, sizeof(data)) != 0) {
+		if (memcmp(ptrs[i], data, 11) != 0) {
 			return 1;
 		}
 	}
@@ -65,7 +65,7 @@ int	test_100_mallocs_small(void) {
 		ptrs[i] = malloc(1024);
 
 		memcpy(ptrs[i], data, 11);
-		if (memcmp(ptrs[i], data, sizeof(data)) != 0) {
+		if (memcmp(ptrs[i], data, 11) != 0) {
 			return 1;
 		}
 	}

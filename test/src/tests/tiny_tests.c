@@ -7,7 +7,7 @@ int	test_instant_free_tiny(void) {
 	for (int i = 0; i < 200; ++i) {
 		void*	ptr = malloc(14);
 		memcpy(ptr, data, 11);
-		if (memcmp(ptr, data, sizeof(data)) != 0) {
+		if (memcmp(ptr, data, 11) != 0) {
 			return 1;
 		}
 		free(ptr);
@@ -23,7 +23,7 @@ int	test_free_after_tiny(void) {
 	for (int i = 0; i < 500; ++i) {
 		ptrs[i] = malloc(14);
 		memcpy(ptrs[i], data, 11);
-		if (memcmp(ptrs[i], data, sizeof(data)) != 0) {
+		if (memcmp(ptrs[i], data, 11) != 0) {
 			return 1;
 		}
 	}
@@ -43,7 +43,7 @@ int	test_100_mallocs_tiny(void) {
 		ptrs[i] = malloc(16);
 
 		memcpy(ptrs[i], data, 11);
-		if (memcmp(ptrs[i], data, sizeof(data)) != 0) {
+		if (memcmp(ptrs[i], data, 11) != 0) {
 			return 1;
 		}
 	}

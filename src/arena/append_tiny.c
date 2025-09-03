@@ -16,7 +16,6 @@ void*	append_tiny(void) {
 	}
 
 	arena_header = ptr;
-	arena_header->is_main = true;
 	arena_header->allocated = 0;
 	arena_header->size = g_arenas.tiny_arena_size;
 	arena_header->next = g_arenas.tiny;

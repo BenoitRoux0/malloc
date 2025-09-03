@@ -3,17 +3,17 @@
 #include "malloc.h"
 
 static void*	worst_or_fit(size_t size);
-static void*	sub_arena_worst_or_fit(void* sub_arena, size_t size);
+static void*	sub_arena_worst_or_fit(void* sub_arena, size_t size, size_t aligned);
 
 void*	take_small(size_t size, t_chunk_header* hint) {
 	t_chunk_header*	chunk = hint;
 	t_chunk_header* next_chunk = NULL;
 
-	if (chunk == NULL) {
+	if (!chunk) {
 		chunk = worst_or_fit(size);
 	}
 
-	if (chunk == NULL) {
+	if (!chunk) {
 #ifdef DEBUG
 		put_str(2, "need to add arena for smalls\n");
 #endif
@@ -22,9 +22,11 @@ void*	take_small(size_t size, t_chunk_header* hint) {
 		chunk = worst_or_fit(size);
 	}
 
-	if (chunk == NULL) {
+	if (!chunk) {
 		return NULL;
 	}
+
+	t_arena_hdr*	main_arena = get_main_arena(chunk);
 
 	if (chunk == hint) {
 #ifdef DEBUG
@@ -34,7 +36,7 @@ void*	take_small(size_t size, t_chunk_header* hint) {
 		put_nbr(2,  chunk->true_size + get_next_chunk(chunk)->true_size + sizeof (t_chunk_header));
 		put_str(2, "\n");
 #endif
-		chunk->true_size += get_next_chunk(chunk)->true_size + sizeof (t_chunk_header);
+		merge_next_chunk(chunk);
 	}
 
 #ifdef DEBUG
@@ -62,7 +64,7 @@ void*	take_small(size_t size, t_chunk_header* hint) {
 #endif
 
 		next_chunk = get_next_chunk(chunk);
-		if (get_main_arena(chunk) == get_main_arena(next_chunk) && (void*) next_chunk < get_border_addr(chunk) - sizeof(t_chunk_header)) {
+		if ((void*) next_chunk < get_border_addr(chunk) - sizeof(t_chunk_header)) {
 			next_chunk->owned = false;
 			next_chunk->size = old_true_size - sizeof(t_chunk_header) - chunk->true_size;
 			next_chunk->true_size = next_chunk->size;
@@ -108,7 +110,16 @@ void*	take_small(size_t size, t_chunk_header* hint) {
 	chunk->owned = true;
 
 	if (!hint)
-		++get_main_arena(chunk)->allocated;
+		++main_arena->allocated;
+
+#ifdef DEBUG
+	if (check_arena(main_arena) == false) {
+		put_str(2, "problem with coalescing\n");
+	} else {
+		put_str(2, "coalescing good\n");
+	}
+#endif
+
 
 #ifdef DEBUG
 	put_str(2, "end take small\n\n");
@@ -120,19 +131,10 @@ void*	take_small(size_t size, t_chunk_header* hint) {
 static void*	worst_or_fit(size_t size) {
 	t_chunk_header*	worst = NULL;
 	t_chunk_header*	found = NULL;
+	size_t			aligned = size_aligned(size);
 
 	for (void* arena_ite = g_arenas.small; arena_ite != NULL; arena_ite = has_arena(arena_ite)->next) {
-		found = sub_arena_worst_or_fit(arena_ite, size);
-
-//		if (found) {
-//			put_str(1, "found chunk ");
-//			put_nbr(1,  found->true_size);
-//			put_str(1, " in arena ");
-//			put_ptr(1, (uintptr_t)  arena_ite);
-//			put_str(1, " for ");
-//			put_nbr(1,  size);
-//			put_str(1, "\n");
-//		}
+		found = sub_arena_worst_or_fit(arena_ite, size, aligned);
 
 		if (!found ||
 			found->size == 0 ||
@@ -140,7 +142,7 @@ static void*	worst_or_fit(size_t size) {
 			continue;
 		}
 
-		if (found->true_size == size_aligned(size) ||
+		if (found->true_size == aligned ||
 			found->true_size == g_arenas.small_arena_size - sizeof (t_arena_hdr)) {
 			return found;
 		}
@@ -153,20 +155,18 @@ static void*	worst_or_fit(size_t size) {
 	return worst;
 }
 
-static void*	sub_arena_worst_or_fit(void* sub_arena, size_t size) {
+static void*	sub_arena_worst_or_fit(void* sub_arena, size_t size, size_t aligned) {
 	t_chunk_header*	worst = NULL;
 	void* chunk_ite = sub_arena + sizeof(t_arena_hdr);
+	void* limit = sub_arena + g_arenas.small_arena_size - (sizeof(t_chunk_header) + aligned);
 
-	// put_str(1, "arena:");
-	// put_ptr(1, (uintptr_t) sub_arena);
-	// put_str(1, "\n");
-	for (; chunk_ite < sub_arena + g_arenas.small_arena_size - (sizeof(t_chunk_header) + size_aligned(size)); chunk_ite = get_next_chunk(chunk_ite)) {
+	for (; chunk_ite < limit; chunk_ite = get_next_chunk(chunk_ite)) {
 		if (has_chunk(chunk_ite)->owned ||
 			has_chunk(chunk_ite)->true_size < size) {
 			continue;
 		}
 
-		if (has_chunk(chunk_ite)->true_size == size_aligned(size) ||
+		if (has_chunk(chunk_ite)->true_size == aligned ||
 			has_chunk(chunk_ite)->true_size == g_arenas.small_arena_size - sizeof (t_arena_hdr)) {
 			return chunk_ite;
 		}

@@ -6,8 +6,10 @@ void	free_tiny(void* chunk_ptr) {
 	t_chunk_header*	chunk_hdr = chunk_ptr;
 	t_arena_hdr*	arena_hdr = get_main_arena(chunk_hdr);
 
-	if (arena_hdr == NULL)
+	if (arena_hdr == NULL) {
+		unlock_alloc();
 		return;
+	}
 
 #ifdef DEBUG
 	put_str(2, "tiny arena: ");

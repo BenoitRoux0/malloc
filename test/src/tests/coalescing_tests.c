@@ -9,10 +9,10 @@ int	test_coalescing(void) {
 	free(ptr_1);
 	free(ptr_2);
 
-	void *new_ptr = malloc(64);
+	void *new_ptr = malloc(96);
 
-	free(new_ptr);
 	free(ptr_3);
+	free(new_ptr);
 
 	if (ptr_1 == new_ptr)
 		return 0;

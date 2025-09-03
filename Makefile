@@ -22,8 +22,6 @@ FT_TEST_NAME_BONUS = 			$(BIN_DIR)/libft_malloc_test_bonus
 TEST_NAME_BONUS = 				$(BIN_DIR)/malloc_test_bonus
 MOCKS_NAME_BONUS =				$(LIB_DIR)/mocks_bonus.a
 
-CC = 							gcc
-
 SRC =							src/free/free.c \
 								src/free/free_chunk.c \
 								src/free/free_tiny.c \
@@ -40,6 +38,7 @@ SRC =							src/free/free.c \
 								src/calloc/calloc.c \
 								src/reallocarray/reallocarray.c \
 								src/show_alloc_mem/show_alloc_mem.c \
+								src/show_alloc_mem/show_alloc_mem_fd.c \
 								src/utils/str.c \
 								src/utils/puts.c \
 								src/utils/min.c \
@@ -50,6 +49,7 @@ SRC =							src/free/free.c \
 								src/utils/unlock_alloc.c \
 								src/utils/is_out.c \
 								src/arena/append_tiny.c \
+								src/arena/check_arena.c \
 								src/arena/append_small.c \
 								src/arena/take_tiny.c \
 								src/arena/take_small.c \
@@ -58,7 +58,8 @@ SRC =							src/free/free.c \
 								src/chunk/get_chunk_size.c \
 								src/chunk/get_next_page.c \
 								src/chunk/get_main_arena.c \
-								src/chunk/get_border_addr.c
+								src/chunk/get_border_addr.c \
+								src/chunk/merge_next_chunk.c
 
 SRC_DEBUG =						$(SRC) \
 								src/get_malloc_data.c
@@ -97,8 +98,9 @@ OBJ_DEBUG_BONUS =				$(SRC_DEBUG:%.c=$(OBJ_DEBUG_DIR)/%_bonus.o)
 OBJ_TEST_BONUS =				$(SRC_TEST:%.c=$(OBJ_DIR)/%_bonus.o)
 OBJ_MOCKS_BONUS =				$(SRC_MOCKS:%.c=$(OBJ_DIR)/%_bonus.o)
 
-CFLAGS =						-Wall -Wextra -Werror -fpic
-CFLAGS_DEBUG =					-Wall -Wextra -Werror -fpic  -DDEBUG=1
+CFLAGS =						-Wall -Wextra -Werror -fpic -g3
+CFLAGS_DEBUG =					-Wall -Wextra -Werror -fpic  -DDEBUG=1 -g3
+
 CFLAGS_TEST =					-Wall -Wextra -Werror  -DDEBUG=1
 
 .PHONY:	all

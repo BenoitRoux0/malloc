@@ -20,7 +20,7 @@ int	realloc_small2larger_small_test(void) {
 		return 1;
 	}
 
-	if (memcmp(ptr_1_ext, data, sizeof(data)) != 0) {
+	if (memcmp(ptr_1_ext, data, 11) != 0) {
 		free(ptr_1_ext);
 		free(ptr_3);
 		return 1;
@@ -50,7 +50,7 @@ int	realloc_larger_small2small_test(void) {
 		return 1;
 	}
 
-	if (memcmp(ptr_1_ext, data, sizeof(data)) != 0) {
+	if (memcmp(ptr_1_ext, data, 11) != 0) {
 		free(ptr_1_ext);
 		return 1;
 	}
@@ -71,7 +71,7 @@ int	realloc_small2tiny_test(void) {
 
 	char* reallocated_ptr = realloc(ptr, 15);
 
-	if (memcmp(reallocated_ptr, data, sizeof(data)) != 0) {
+	if (memcmp(reallocated_ptr, data, 11) != 0) {
 		free(reallocated_ptr);
 		free(ptr);
 		return 1;
@@ -84,7 +84,7 @@ int	realloc_small2tiny_test(void) {
 
 	free(new_ptr);
 
-	if (strncmp(ptr, new_ptr, sizeof(data)) != 0)
+	if (strncmp(ptr, new_ptr, 11) != 0)
 		return 2;
 
 	return 0;
@@ -98,21 +98,30 @@ int	realloc_small2large_test(void) {
 
 	char* reallocated_ptr = realloc(ptr, 4096);
 
-	if (memcmp(reallocated_ptr, data, sizeof(data)) != 0) {
+	if (!reallocated_ptr) {
+		free(ptr);
+		return 1;
+	}
+
+	if (memcmp(reallocated_ptr, data, 11) != 0) {
 		free(reallocated_ptr);
 		free(ptr);
 		return 1;
 	}
 
 	free(reallocated_ptr);
-	free(ptr);
 
 	char*	new_ptr = malloc(64);
 
+	if (strncmp(ptr, new_ptr, 11) != 0) {
+		free(ptr);
+		free(new_ptr);
+		return 2;
+	}
+
+	free(ptr);
 	free(new_ptr);
 
-	if (strncmp(ptr, new_ptr, sizeof(data)) != 0)
-		return 2;
 
 	return 0;
 }

@@ -36,9 +36,15 @@ typedef enum e_size_category {
 	LARGE
 }	t_size_category;
 
+typedef struct s_chunk_header {
+	struct s_chunk_header*	prec_chunk;
+	bool					owned;
+	size_t					true_size;
+	size_t					size;
+}	t_chunk_header;
+
 typedef struct s_arena_hdr {
-	bool				is_main;
-	uint8_t				_[6];
+	uint8_t				_[8];
 	size_t				size;
 	size_t				allocated;
 	struct s_arena_hdr*	next;
@@ -52,13 +58,6 @@ typedef struct s_arenas {
 	t_arena_hdr*	small;
 	t_arena_hdr*	large;
 }	t_arenas;
-
-typedef struct s_chunk_header {
-	struct s_chunk_header*	prec_chunk;
-	bool					owned;
-	size_t					true_size;
-	size_t					size;
-}	t_chunk_header;
 
 extern	t_arenas g_arenas;
 
@@ -76,6 +75,7 @@ void*	append_small(void);
 
 void	update_after_free_tiny(void);
 void	remove_arena(t_arena_hdr** target, t_arena_hdr* to_remove);
+bool	check_arena(void* to_check);
 void*	get_main(void* arena);
 
 // chunks
@@ -83,6 +83,7 @@ size_t			get_chunk_size(const void* chunk);
 void*			get_next_page(void* chunk);
 t_arena_hdr*	get_main_arena(void* chunk);
 void*			get_border_addr(t_chunk_header* chunk);
+void			merge_next_chunk(t_chunk_header* chunk_hdr);
 
 // utils
 size_t			ft_strlen(const char* s);
@@ -117,5 +118,7 @@ void*	to_large(t_chunk_header* chunk_header, size_t size);
 void*	calloc(size_t nmemb, size_t size);
 
 void*	reallocarray(void *ptr, size_t nmemb, size_t size);
+
+void	show_alloc_mem_fd(int fd, bool show_tiny, bool show_small, bool show_large);
 
 #endif // MALLOC_H

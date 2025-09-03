@@ -18,11 +18,6 @@ void*	alloc_tiny(size_t size) {
  	put_str(2, "tiny alloc'd\n");
 #endif
 
-	unlock_alloc();
-
-	if (ptr == NULL)
-		return NULL;
-
 #ifdef DEBUG
 	if (is_out(ptr)) {
 		put_str(2, "alloc small addr out: ");
@@ -30,6 +25,11 @@ void*	alloc_tiny(size_t size) {
 		put_str(2, "\n");
 	}
 #endif
+
+	unlock_alloc();
+
+	if (ptr == NULL)
+		return NULL;
 
 	return ptr + sizeof (t_chunk_header);
 }

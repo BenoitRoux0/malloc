@@ -74,6 +74,12 @@ void*	realloc(void* ptr, size_t size) {
 #ifdef DEBUG
 	put_ptr(2, (uintptr_t) ptr);
 	put_str(2, " realloc'd\n");
+
+	if (is_out(ptr)) {
+		put_str(2, "realloc addr out: ");
+		put_ptr(2, (uintptr_t) ptr);
+		put_str(2, "\n");
+	}
 #endif
 
 	return new_ptr;

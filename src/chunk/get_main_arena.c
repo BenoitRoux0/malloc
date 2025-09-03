@@ -7,6 +7,9 @@ t_arena_hdr*	get_main_arena(void* chunk) {
 
 	arena_hdr = g_arenas.small;
 
+	if (!chunk)
+		return NULL;
+
 #ifdef DEBUG
 	put_str(2, "main arena of ");
 	put_ptr(2, (uintptr_t) chunk);
