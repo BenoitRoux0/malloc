@@ -30,11 +30,6 @@ void*	alloc_large(size_t size) {
 
 	g_arenas.large = arena_header;
 
-//	put_str(1, "large alloc'd\n");
-
-
-//	bzero(ptr + sizeof (t_chunk_header) + sizeof (t_arena_hdr), size);
-
 #ifdef DEBUG
 	if (!get_main_arena(ptr)) {
 		put_str(2, "alloc large addr out: ");

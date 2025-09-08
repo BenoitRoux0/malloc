@@ -11,9 +11,6 @@ void*	alloc_tiny(size_t size) {
 
 	void*	ptr = take_tiny(size);
 
-//	if (ptr != NULL)
-//		bzero(ptr + sizeof (t_chunk_header), size);
-
 #ifdef DEBUG
  	put_str(2, "tiny alloc'd\n");
 #endif

@@ -99,7 +99,7 @@ CFLAGS_DEBUG =					-Wall -Wextra -Werror -fpic  -DDEBUG=1 -g3
 CFLAGS_TEST =					-Wall -Wextra -Werror  -DDEBUG=1
 
 LFLAGS =						--version-script=libmalloc.version
-LFLAGS_DEBUG =					--version-script=libmalloc_debug.version
+LFLAGS_DEBUG =					--version-script=libmalloc.version --version-script=libmalloc_debug.version
 
 .PHONY:	all
 all:

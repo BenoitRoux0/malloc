@@ -32,8 +32,6 @@ void*	realloc(void* ptr, size_t size) {
 		return ptr;
 	}
 
-	// size_t old_size = chunk_header->size;
-
 	void*	new_ptr = NULL;
 
 	if (size <= TINY_MAX) {
@@ -65,13 +63,7 @@ void*	realloc(void* ptr, size_t size) {
 		put_ptr(2, (uintptr_t) new_ptr);
 		put_str(2, "\n");
 	}
-#endif
 
-	// if (size > old_size) {
-	// 	bzero(new_ptr + old_size, size - old_size - 1);
-	// }
-
-#ifdef DEBUG
 	put_ptr(2, (uintptr_t) ptr);
 	put_str(2, " realloc'd\n");
 

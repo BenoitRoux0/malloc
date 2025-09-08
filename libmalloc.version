@@ -1,4 +1,4 @@
-MALLOC {
+LIBFT_MALLOC {
     global: malloc; calloc; free; realloc; reallocarray; show_alloc_mem;
     local: *;
 };

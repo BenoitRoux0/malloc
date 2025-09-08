@@ -16,9 +16,6 @@ void*	alloc_small(size_t size, t_chunk_header* hint) {
 	lock_alloc();
 
 	void*	ptr = take_small(size, hint);
-//	put_str(1, "small alloc'd\n");
-
-//	bzero(ptr + sizeof (t_chunk_header), size);
 
 #ifdef DEBUG
 	if (is_out(ptr)) {

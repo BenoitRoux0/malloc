@@ -26,11 +26,5 @@ void*	append_small(void) {
 	has_chunk(chunk_header)->true_size = g_arenas.small_arena_size - sizeof (t_arena_hdr);
 	has_chunk(chunk_header)->size = g_arenas.small_arena_size - sizeof (t_arena_hdr);
 
-	// for (void*	arena_ptr = arena_header; arena_ptr < ptr + g_arenas.tiny_arena_size; arena_ptr += g_arenas.page_size) {
-	// 	chunk_header = arena_ptr + sizeof(t_arena_hdr);
-	//
-	// 	has_chunk(chunk_header)->size = g_arenas.page_size - sizeof (t_arena_hdr);
-	// }
-
 	return ptr;
 }
