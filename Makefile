@@ -132,9 +132,9 @@ run_test:						test
 								@mkdir -p .ft_test_out/
 								@mkdir -p .test_out/
 								@echo "running tests for libft_malloc"
-								@TEST_OUT_DIR=./.ft_test_out/ /usr/bin/time --format='major: %F\nminor: %R' --output=.ft_test_out/faults ./libft_malloc_test
+								@TEST_OUT_DIR=./.ft_test_out/ ./libft_malloc_test
 								@echo "running tests for true_malloc"
-								@TEST_OUT_DIR=./.test_out/ /usr/bin/time --format='major: %F\nminor: %R' --output=.test_out/faults ./malloc_test
+								@TEST_OUT_DIR=./.test_out/ ./malloc_test
 								@diff .ft_test_out/faults .test_out/faults
 
 $(OBJ_DIR)/src/%.o:				src/%.c	include/internal/malloc.h
