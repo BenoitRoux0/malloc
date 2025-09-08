@@ -1,0 +1,4 @@
+MALLOC {
+    global: malloc; calloc; free; realloc; reallocarray; show_alloc_mem; get_malloc_data;
+    local: *;
+};

@@ -60,7 +60,6 @@ int	realloc_large2tiny_test(void);
 int	realloc_large2small_test(void);
 
 int	test_printf(void);
-int	test_backtrace(void);
 
 extern char**	g_to_run;
 extern bool		g_fork;

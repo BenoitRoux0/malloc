@@ -9,7 +9,6 @@ typedef struct {
 }	t_malloc_data;
 
 /**
- * @fn void	free(void *ptr)
  * @brief Function to free an allocated memory
  *
  * @param ptr pointer to be free
@@ -24,15 +23,29 @@ void	free(void *ptr);
 void*	malloc(size_t size);
 
 /**
- * @brief
+ * @brief realloc resizes a memory block allocated by malloc. Takes a pointer and new size.
  * @param ptr Pointer to the malloc'd memory to resize
  * @param size The mew desired size
- * @return the new pointer
+ * @return returns pointer to resized memory (may be same or different address) or NULL on failure
  */
 void*	realloc(void *ptr, size_t size);
 
+/**
+ * @brief calloc allocates memory for an array and initializes all bytes to zero.
+ * Takes two parameters (number of elements and size of each element)
+ * @param nmemb Number of desired members in array
+ * @param size Size of the array
+ * @return returns a pointer to the zero-initialized memory block or NULL on failure
+ */
 void*	calloc(size_t nmemb, size_t size);
 
+/**
+ * @brief reallocarray resizes array memory like realloc but with overflow protection
+ * @param ptr pointer to previously allocated memory block (or NULL for new allocation)
+ * @param nmemb number of array elements
+ * @param size size in bytes of each element
+ * @return Returns resized memory pointer or NULL on failure/overflow
+ */
 void*	reallocarray(void *ptr, size_t nmemb, size_t size);
 
 void	show_alloc_mem();

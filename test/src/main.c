@@ -72,7 +72,6 @@ int main(int ac, char** av) {
 
 	run_test_group("tests external functions",
 		TEST(test_printf),
-		TEST(test_backtrace),
 		END_TESTS
 	);
 

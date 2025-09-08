@@ -12,7 +12,6 @@ FULL_NAME_DEBUG =				$(LIB_DIR)/libft_malloc_$(HOSTTYPE)_debug.so
 FT_TEST_NAME =					$(BIN_DIR)/libft_malloc_test
 TEST_NAME =						$(BIN_DIR)/malloc_test
 MOCKS_NAME =					$(LIB_DIR)/mocks.a
-NAME_MTRACE =					$(BIN_DIR)/mtrace
 
 NAME_BONUS =					$(LIB_DIR)/libft_malloc_bonus.so
 FULL_NAME_BONUS = 				$(LIB_DIR)/libft_malloc_$(HOSTTYPE)_bonus.so
@@ -81,9 +80,6 @@ SRC_TEST =						test/src/main.c \
 SRC_MOCKS = 					test/src/mocks/show_alloc_mem.c \
 								test/src/mocks/get_malloc_data.c
 
-SRC_MTRACE =					mtrace/src/main.c \
-								mtrace/src/sig_handler.c \
-
 OBJ_DIR =						.objs
 OBJ_DEBUG_DIR =					.objs/debug
 
@@ -91,7 +87,6 @@ OBJ =							$(SRC:%.c=$(OBJ_DIR)/%.o)
 OBJ_DEBUG =						$(SRC_DEBUG:%.c=$(OBJ_DEBUG_DIR)/%.o)
 OBJ_TEST =						$(SRC_TEST:%.c=$(OBJ_DIR)/%.o)
 OBJ_MOCKS =						$(SRC_MOCKS:%.c=$(OBJ_DIR)/%.o)
-OBJ_MTRACE =					$(SRC_MTRACE:%.c=$(OBJ_DIR)/%.o)
 
 OBJ_BONUS =						$(SRC:%.c=$(OBJ_DIR)/%_bonus.o)
 OBJ_DEBUG_BONUS =				$(SRC_DEBUG:%.c=$(OBJ_DEBUG_DIR)/%_bonus.o)
@@ -103,6 +98,9 @@ CFLAGS_DEBUG =					-Wall -Wextra -Werror -fpic  -DDEBUG=1 -g3
 
 CFLAGS_TEST =					-Wall -Wextra -Werror  -DDEBUG=1
 
+LFLAGS =						--version-script=libmalloc.version
+LFLAGS_DEBUG =					--version-script=libmalloc_debug.version
+
 .PHONY:	all
 all:
 								$(MAKE) malloc
@@ -110,10 +108,6 @@ all:
 								$(MAKE) bonus
 								$(MAKE) debug_bonus
 								$(MAKE) test
-								$(MAKE) mtrace
-
-.PHONY:	mtrace
-mtrace:							$(NAME_MTRACE)
 
 .PHONY:	malloc
 malloc:							$(NAME)
@@ -143,10 +137,6 @@ run_test:						test
 								@TEST_OUT_DIR=./.test_out/ /usr/bin/time --format='major: %F\nminor: %R' --output=.test_out/faults ./malloc_test
 								@diff .ft_test_out/faults .test_out/faults
 
-$(OBJ_DIR)/mtrace/%.o:			mtrace/%.c	mtrace/include/mtrace.h
-								@mkdir -p $(shell dirname $@)
-								$(CC) $(CFLAGS) -o $@ -c $< -Imtrace/include -Iinclude/public
-
 $(OBJ_DIR)/src/%.o:				src/%.c	include/internal/malloc.h
 								@mkdir -p $(shell dirname $@)
 								$(CC) $(CFLAGS) -o $@ -c $< -Iinclude/internal
@@ -171,9 +161,6 @@ $(OBJ_DIR)/test/src/%_bonus.o:	test/src/%.c include/public/malloc.h test/include
 								@mkdir -p $(shell dirname $@)
 								$(CC) $(CFLAGS_TEST) -DBONUS=1 -o $@ -c $< -Iinclude/public -Itest/include
 
-$(NAME_MTRACE):					$(OBJ_MTRACE) | $(BIN_DIR)
-								$(CC) $(CFLAGS) -o $@ $^
-
 $(NAME):						$(FULL_NAME) | $(LIB_DIR)
 								ln -s $(PWD)/$(FULL_NAME) $(NAME) && echo "link created" || echo "link already exists"
 
@@ -181,10 +168,10 @@ $(NAME_BONUS):					$(FULL_NAME_BONUS) | $(LIB_DIR)
 								ln -s $(PWD)/$(FULL_NAME_BONUS) $(NAME_BONUS) && echo "link created" || echo "link already exists"
 
 $(FULL_NAME):					$(OBJ) | $(LIB_DIR)
-								$(CC) $(CFLAGS) -shared -o $@ $^
+								ld $(LFLAGS) -shared -o $@ $^
 
 $(FULL_NAME_BONUS):				$(OBJ_BONUS) | $(LIB_DIR)
-								$(CC) $(CFLAGS) -shared -o $@ $^
+								ld $(LFLAGS) -shared -o $@ $^
 
 $(NAME_DEBUG):					$(FULL_NAME_DEBUG) | $(LIB_DIR)
 								ln -s $(PWD)/$(FULL_NAME_DEBUG) $(NAME_DEBUG) && echo "link created" || echo "link already exists"
@@ -193,10 +180,10 @@ $(NAME_DEBUG_BONUS):			$(FULL_NAME_DEBUG_BONUS) | $(LIB_DIR)
 								ln -s $(PWD)/$(FULL_NAME_DEBUG_BONUS) $(NAME_DEBUG_BONUS) && echo "link created" || echo "link already exists"
 
 $(FULL_NAME_DEBUG):				$(OBJ_DEBUG) | $(LIB_DIR)
-								$(CC) $(CFLAGS_DEBUG) -shared -o $@ $^
+								ld $(LFLAGS_DEBUG) -shared -o $@ $^
 
 $(FULL_NAME_DEBUG_BONUS):		$(OBJ_DEBUG_BONUS) | $(LIB_DIR)
-								$(CC) $(CFLAGS_DEBUG) -shared -o $@ $^
+								ld $(LFLAGS_DEBUG) -shared -o $@ $^
 
 $(FT_TEST_NAME):				$(NAME_DEBUG) $(OBJ_TEST) | $(BIN_DIR)
 								$(CC) $(CFLAGS_TEST) -L$(PWD)/$(LIB_DIR) -Wl,-rpath=$(PWD)/$(LIB_DIR) -o $@ $(OBJ_TEST) -lft_malloc_debug
