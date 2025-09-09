@@ -4,9 +4,7 @@ void merge_next_chunk(t_chunk_header* chunk_hdr) {
 	t_chunk_header* next_chunk = get_next_chunk(chunk_hdr);
 
 #ifdef DEBUG
-
 	put_str(2, "merge next chunk\n");
-
 #endif
 
 	if ((void*)next_chunk < get_border_addr(chunk_hdr) - sizeof(t_chunk_header)) {

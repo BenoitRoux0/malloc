@@ -48,7 +48,7 @@ int	test_10_mallocs_small(void) {
 	t_malloc_data malloc_data = get_malloc_data();
 
 	for (int i = 0; i < 10; ++i) {
-		// free(ptrs[i]);
+		free(ptrs[i]);
 	}
 
 	if (malloc_data.mmaped_small != 1)
@@ -73,7 +73,7 @@ int	test_100_mallocs_small(void) {
 	t_malloc_data malloc_data = get_malloc_data();
 
 	for (int i = 0; i < 100; ++i) {
-		// free(ptrs[i]);
+		free(ptrs[i]);
 	}
 
 	if (malloc_data.mmaped_small != 1)
